@@ -84,9 +84,8 @@ function clearChat() {
 
 <template>
   <!-- 悬浮入口 -->
-  <div v-if="!visible" class="ai-fab" @click="visible = true">
-    <el-icon :size="22"><ChatDotRound /></el-icon>
-    <span>智能客服</span>
+  <div v-if="!visible" class="ai-fab" @click="visible = true" title="智能客服">
+    <el-icon :size="21"><ChatDotRound /></el-icon>
   </div>
 
   <!-- 对话面板 -->
@@ -138,32 +137,31 @@ function clearChat() {
 <style scoped>
 .ai-fab {
   position: fixed;
-  right: 24px;
-  bottom: 92px;
+  right: 16px;
+  bottom: 96px;
   z-index: 2000;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  border-radius: var(--radius-sm);
+  justify-content: center;
+  border-radius: 50%;
   background: var(--c-primary);
-  color: #fff;
-  font-size: 14px;
+  color: var(--c-accent);
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(77, 107, 254, 0.28);
+  box-shadow: 0 6px 18px rgba(4, 60, 117, 0.26);
   transition: transform 0.2s, box-shadow 0.2s;
 }
-.ai-fab:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(77, 107, 254, 0.36);
+.ai-fab:active {
+  transform: scale(0.92);
 }
 
 .ai-panel {
   position: fixed;
-  right: 24px;
-  bottom: 92px;
+  right: 12px;
+  bottom: 96px;
   z-index: 2000;
-  width: 380px;
+  width: 369px;
   height: 540px;
   display: flex;
   flex-direction: column;
