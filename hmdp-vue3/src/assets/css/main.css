@@ -5,7 +5,7 @@ html {
 }
 body{
     margin: 0;
-    background: #f5f4f1;
+    background: #faf6ee;
     color: #1a1f26;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
                  "Microsoft YaHei", Arial, sans-serif;
@@ -31,23 +31,23 @@ html,body,#app{
     --c-primary-soft: #eaf0f6;
 
     --c-accent: #ebd4a2;
-    --c-accent-soft: #f7efdc;
+    --c-accent-soft: #f9f0d8;
 
     --c-neutral: #aba9a1;
 
     /* 背景与卡片（暖白，呼应米黄） */
-    --c-bg: #f5f4f1;
+    --c-bg: #faf6ee;
     --c-card: #ffffff;
 
     /* 文字 */
     --c-text: #1a1f26;
-    --c-text-sub: #6b6f75;
-    --c-text-muted: #aba9a1;
+    --c-text-sub: #6f6a60;
+    --c-text-muted: #a8a196;
 
     /* 边框与填充（暖灰系） */
-    --c-border: #e8e6e1;
-    --c-fill: #f0eeea;
-    --c-border-strong: #ddd9d2;
+    --c-border: #ebe4d6;
+    --c-fill: #f5efe3;
+    --c-border-strong: #ded5c3;
 
     /* 价格：跟主色走，靠字重强调而不是靠颜色 */
     --c-price: #043c75;
@@ -101,7 +101,7 @@ html,body,#app{
     right: 0;
     bottom: 0;
     z-index: 999;
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(255, 253, 247, 0.94);
     backdrop-filter: saturate(180%) blur(12px);
     -webkit-backdrop-filter: saturate(180%) blur(12px);
 }
