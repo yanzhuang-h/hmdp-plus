@@ -5,8 +5,8 @@ html {
 }
 body{
     margin: 0;
-    background: #f2f3f5;
-    color: #16181d;
+    background: #f5f4f1;
+    color: #1a1f26;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
                  "Microsoft YaHei", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -18,35 +18,47 @@ html,body,#app{
 
 /* ============================================================
    设计变量
-   参考 DeepSeek 的设计语言：蓝紫主色、细边框、克制圆角、大量留白
+   主色板取自「黄昏海浪」：
+     深蓝 #043C75 / 暖灰 #ABA9A1 / 米黄 #EBD4A2
+   原则：主色只给可操作项，米黄只做装饰填充，中性一律暖灰。
    ============================================================ */
 :root {
-    /* 主色 */
-    --c-primary: #4d6bfe;
-    --c-primary-hover: #3b58e8;
-    --c-primary-soft: #eef1ff;
+    /* 品牌三色 */
+    --c-primary: #043c75;
+    --c-primary-hover: #032e5a;
+    --c-primary-soft: #eaf0f6;
 
-    /* 价格 / 交易强调（克制红，仅用于金额与已赞） */
-    --c-price: #e5484d;
+    --c-accent: #ebd4a2;
+    --c-accent-soft: #f7efdc;
 
-    /* 中性色 */
-    --c-bg: #f2f3f5;
+    --c-neutral: #aba9a1;
+
+    /* 背景与卡片（暖白，呼应米黄） */
+    --c-bg: #f5f4f1;
     --c-card: #ffffff;
-    --c-text: #16181d;
-    --c-text-sub: #6b7280;
-    --c-text-muted: #a1a1aa;
-    --c-border: #e7e8ec;
-    --c-fill: #eef0f3;
 
-    /* 圆角：克制，越小越"锐利高级" */
+    /* 文字 */
+    --c-text: #1a1f26;
+    --c-text-sub: #6b6f75;
+    --c-text-muted: #aba9a1;
+
+    /* 边框与填充（暖灰系） */
+    --c-border: #e8e6e1;
+    --c-fill: #f0eeea;
+    --c-border-strong: #ddd9d2;
+
+    /* 价格：跟主色走，靠字重强调而不是靠颜色 */
+    --c-price: #043c75;
+
+    /* 圆角：克制 */
     --radius-xs: 6px;
     --radius-sm: 8px;
     --radius: 10px;
     --radius-lg: 14px;
 
-    /* 阴影：双层极淡，主要靠 1px 边框分层 */
-    --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
-    --shadow-float: 0 12px 32px rgba(16, 24, 40, 0.10);
+    /* 阴影：双层极淡 */
+    --shadow-card: 0 1px 2px rgba(26, 31, 38, 0.04), 0 1px 3px rgba(26, 31, 38, 0.03);
+    --shadow-float: 0 12px 32px rgba(26, 31, 38, 0.10);
 
     /* 间距 */
     --gap-1: 4px;
@@ -62,7 +74,7 @@ html,body,#app{
     color: var(--c-text-sub);
 }
 .el-tabs__item.is-active {
-    color: var(--c-text);
+    color: var(--c-primary);
     font-weight: 600;
 }
 .el-tabs__active-bar {
@@ -99,8 +111,8 @@ html,body,#app{
     justify-content: center;
     border-radius: 50%;
     background: var(--c-primary);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(77, 107, 254, 0.28);
+    color: var(--c-accent);
+    box-shadow: 0 4px 12px rgba(4, 60, 117, 0.24);
     transition: transform 0.18s ease, background 0.18s ease;
 }
 .foot .add-btn:active {

@@ -129,7 +129,7 @@
 }
 .blog-box:active {
     transform: scale(0.985);
-    border-color: #d9dbe1;
+    border-color: #ddd9d2;
 }
 
 .blog-img img {

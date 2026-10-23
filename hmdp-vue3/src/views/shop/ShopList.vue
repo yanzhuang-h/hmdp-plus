@@ -282,7 +282,7 @@ onMounted(() => {
 }
 .shop-box:active {
   transform: scale(0.988);
-  border-color: #e4e4e7;
+  border-color: #ddd9d2;
 }
 
 .shop-img {

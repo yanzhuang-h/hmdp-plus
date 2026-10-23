@@ -272,7 +272,7 @@ const toOtherInfo = (id) => {
   width: 80px;
   height: 30px;
   line-height: 30px;
-  background: #2f6fed;
+  background: #043c75;
   color: #fff;
   border-radius: 15px;
   font-size: 14px;
@@ -381,7 +381,7 @@ const toOtherInfo = (id) => {
   width: 80px;
   height: 30px;
   line-height: 30px;
-  background: #2f6fed;
+  background: #043c75;
   color: #fff;
   border-radius: 15px;
   font-size: 14px;
