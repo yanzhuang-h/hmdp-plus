@@ -5,7 +5,7 @@ html {
 }
 body{
     margin: 0;
-    background: #fafafa;
+    background: #f2f3f5;
     color: #16181d;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
                  "Microsoft YaHei", Arial, sans-serif;
@@ -30,13 +30,13 @@ html,body,#app{
     --c-price: #e5484d;
 
     /* 中性色 */
-    --c-bg: #fafafa;
+    --c-bg: #f2f3f5;
     --c-card: #ffffff;
     --c-text: #16181d;
     --c-text-sub: #6b7280;
     --c-text-muted: #a1a1aa;
-    --c-border: #f0f0f2;
-    --c-fill: #f7f7f8;
+    --c-border: #e7e8ec;
+    --c-fill: #eef0f3;
 
     /* 圆角：克制，越小越"锐利高级" */
     --radius-xs: 6px;
