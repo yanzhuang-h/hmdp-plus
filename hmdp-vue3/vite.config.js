@@ -48,6 +48,11 @@ export default defineConfig({
   //   }
   // },
   server: {
+    // 固定端口：否则端口被占用时 Vite 会自动顺延到 5174、5175，
+    // 导致书签里的地址失效（表现为 ERR_CONNECTION_REFUSED）。
+    // strictPort: 端口被占用时直接报错，而不是悄悄换端口。
+    port: 5173,
+    strictPort: true,
     proxy: {
       '/api': {
         target: 'http://localhost:8085',
