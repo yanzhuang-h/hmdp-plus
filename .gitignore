@@ -10,6 +10,7 @@ perf/*.jtl
 perf/*-report/
 perf/diag/
 perf/boot*.log
+perf/*-settings.xml
 
 ### 本地敏感配置（按需创建，不入库）###
 application-local.yml
