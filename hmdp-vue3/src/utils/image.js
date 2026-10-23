@@ -45,6 +45,26 @@ export function resolveImage(path, fallback = DEFAULT_ICON) {
 }
 
 /**
+ * 解析「商铺分类」图标。
+ *
+ * 分类图标与其它图片的路径约定不同：后端 `tb_shop_type.icon` 存的是
+ * `/types/ms.png`（**不含 `/imgs` 前缀**），而实际文件位于 `imgs/types/` 下。
+ * 因此不能直接用 {@link resolveImage}（会拼成 `/src/assets/types/ms.png`，
+ * 落到 Vite 的 SPA fallback 上，表现为「返回 200 但不是图片」）。
+ *
+ * @param {string} icon 后端返回的分类图标，如 `/types/ms.png`
+ */
+export function resolveTypeIcon(icon, fallback = '') {
+  if (!icon || typeof icon !== 'string') return fallback
+  const p = icon.trim()
+  if (!p) return fallback
+  if (p.startsWith('http://') || p.startsWith('https://') || p.startsWith('data:')) return p
+  // 后端若已返回带 /imgs 的完整路径，直接走通用解析
+  if (p.startsWith('/imgs/') || p.startsWith(IMAGE_BASE)) return resolveImage(p)
+  return `${IMAGE_BASE}/imgs/${p.replace(/^\/+/, '')}`
+}
+
+/**
  * 取「逗号分隔的多图字符串」中的第一张。
  *
  * @param {string} images 例如 `/imgs/blogs/a.jpg,/imgs/blogs/b.jpg`

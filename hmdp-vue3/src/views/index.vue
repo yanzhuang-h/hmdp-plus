@@ -9,7 +9,7 @@ import { ref } from 'vue'
 import router from '@/router'
 import FootBar from '@/components/FootBar.vue'
 import { User } from '@element-plus/icons-vue'
-import { resolveImage, firstImage } from '@/utils/image'
+import { resolveImage, resolveTypeIcon, firstImage } from '@/utils/image'
 const isReachBottom = ref(false)
 const types = ref([])
 const blogs = ref([])
@@ -117,7 +117,7 @@ const toInfo = () => {
       @click="toShopList(t.id, t.name)"
     >
       <div class="type-view">
-        <img :src="resolveImage(t.icon)" alt="" />
+        <img :src="resolveTypeIcon(t.icon)" alt="" />
       </div>
       <div class="type-text">{{ t.name }}</div>
     </div>
