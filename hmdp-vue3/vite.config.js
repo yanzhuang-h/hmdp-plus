@@ -53,6 +53,12 @@ export default defineConfig({
         target: 'http://localhost:8085',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      // 后端返回的图片地址是 /imgs/blogs/...，这些文件存在 nginx 的静态目录里，
+      // 需要转发到 nginx(8080)；否则 Vite 会 fallback 成 index.html，图片全部破图。
+      '/imgs': {
+        target: 'http://localhost:8080',
+        changeOrigin: true
       }
     }
   }

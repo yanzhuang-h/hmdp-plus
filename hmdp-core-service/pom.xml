@@ -14,6 +14,22 @@
 
     <name>hmdp-core-service</name>
     <description>黑马点评核心服务</description>
+
+    <!-- Spring AI BOM：用于 MCP Server 与智能客服 -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <!-- 1.0.9：1.0.0 的 OpenAI/DeepSeek 客户端会把 frequency_penalty 等
+                     Double 字段序列化成字符串，触发 DeepSeek 422，补丁版已修复 -->
+                <version>1.0.9</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.javaup</groupId>
@@ -129,6 +145,18 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <!-- Spring AI MCP Server：将商户/优惠券/订单查询能力以标准 MCP 协议暴露给 AI 客户端 -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-server-webmvc</artifactId>
+        </dependency>
+        <!-- Spring AI OpenAI：DeepSeek 提供 OpenAI 兼容 API。
+             不用 spring-ai-starter-model-deepseek 是因为 1.0.0 的 DeepSeek 客户端
+             会把 frequency_penalty 等 Double 字段序列化成字符串，触发 DeepSeek 422 -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
     </dependencies>
     <build>

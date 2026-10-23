@@ -105,6 +105,8 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>${project.sourceEncoding}</encoding>
+                    <!-- 保留方法参数名：MCP 工具与 Spring MVC 绑定需要真实参数名，否则编译成 arg0/arg1 -->
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>

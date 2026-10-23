@@ -11,6 +11,7 @@ import org.javaup.redis.RedisCache;
 import org.javaup.redis.RedisKeyBuild;
 import org.javaup.service.ISeckillVoucherService;
 import org.javaup.service.IShopService;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,11 @@ import java.util.List;
 @Slf4j
 @Order(3)
 @Component
+// 本类会清空 Redis 中秒杀券的库存/已购集合/券信息等缓存，这些缓存会被后续请求按 MySQL 的数据重建。
+// 因此必须等 SeckillVoucherDataRenewalInit 先完成"活动时间续期"，否则会按旧的时间窗重建缓存，
+// 导致"库里已续期、Redis 里仍是旧时间"的不一致（表现为秒杀提示活动已结束/未开始）。
+// 注意：@Order 在有依赖注入的场景下不保证 @PostConstruct 的先后，必须用 @DependsOn 强制。
+@DependsOn("seckillVoucherDataRenewalInit")
 public class DelCacheDataInit {
     
     @Resource

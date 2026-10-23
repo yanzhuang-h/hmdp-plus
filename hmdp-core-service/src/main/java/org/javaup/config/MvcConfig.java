@@ -30,7 +30,10 @@ public class MvcConfig implements WebMvcConfigurer {
                         "/upload/**",
                         "/blog/hot",
                         "/user/code",
-                        "/user/login"
+                        "/user/login",
+                        // MCP Server 端点：由 AI 客户端按 JSON-RPC 调用，没有浏览器登录态，必须放行
+                        "/sse",
+                        "/mcp/**"
                 ).order(1);
         // token刷新的拦截器
         registry.addInterceptor(new RefreshTokenInterceptor(stringRedisTemplate)).addPathPatterns("/**").order(0);

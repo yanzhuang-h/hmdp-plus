@@ -5,6 +5,21 @@ target/
 !**/src/test/**/target/
 logs/
 
+### 压测产物（体积大，只提交脚本与报告）###
+perf/*.jtl
+perf/*-report/
+perf/diag/
+perf/boot*.log
+
+### 本地敏感配置（按需创建，不入库）###
+application-local.yml
+**/application-local.yml
+
+### 用户上传的图片（种子图已入库，运行期新增的不提交）###
+hmdp-vue3/src/assets/imgs/blogs/**/*.png
+hmdp-vue3/src/assets/imgs/blogs/**/*.jpg
+hmdp-vue3/src/assets/imgs/blogs/**/*.jpeg
+
 **/dependency-reduced-pom.xml
 
 ### STS ###

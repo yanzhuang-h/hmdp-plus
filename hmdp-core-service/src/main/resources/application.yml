@@ -3,6 +3,33 @@ server:
 spring:
   application:
     name: hmdp-plus
+  # MCP Server：把商户/优惠券/订单查询能力以标准 MCP 协议暴露给 AI 客户端
+  # 启动后端点：GET /sse（建立 SSE 流）、POST /mcp/message（发送 JSON-RPC 请求）
+  ai:
+    mcp:
+      server:
+        name: hmdp-plus-mcp
+        version: 1.0.0
+        type: SYNC
+    # 智能客服：DeepSeek 通过 OpenAI 兼容协议接入
+    # 不用 spring-ai.deepseek 是因为 Spring AI 1.0.0 的 DeepSeek 客户端会把
+    # Double 字段（frequency_penalty 等）序列化成字符串，触发 DeepSeek 的 422
+    openai:
+      base-url: https://api.deepseek.com
+      api-key: ${DEEPSEEK_API_KEY:}
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          # 必须显式赋值，不能留 null：
+          # 项目的 JsonCustomSerializer 会把 Number 类型的 null 序列化成空字符串 ""，
+          # 而 DeepSeek API 要求 frequency_penalty/presence_penalty 是数字，否则 422
+          frequency-penalty: 0
+          presence-penalty: 0
+          max-tokens: 2048
+          # 同理：String 类型的 null 会被项目的 JsonCustomSerializer 写成 "",
+          # 而 DeepSeek 要求该字段是枚举值之一，"" 会报 unknown variant
+          reasoning-effort: none
   main:
     allow-bean-definition-overriding: true
     allow-circular-references: true  
@@ -24,7 +51,9 @@ spring:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
     generator:
-      WRITE_NUMBERS_AS_STRINGS: true
+      # 不能开启：开启后 Spring AI 发往 DeepSeek 的请求里 frequency_penalty 等 Double
+      # 会被序列化成字符串（如 "0.0"），DeepSeek 返回 422 invalid type: string, expected f32
+      WRITE_NUMBERS_AS_STRINGS: false
   kafka:
     bootstrap-servers: localhost:9092
     producer:

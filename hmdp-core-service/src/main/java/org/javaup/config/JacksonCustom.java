@@ -81,7 +81,11 @@ public class JacksonCustom implements Jackson2ObjectMapperBuilderCustomizer, Ord
         builder.timeZone(TimeZone.getDefault());
         builder.featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         builder.featuresToEnable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature());
-        builder.featuresToEnable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS.mappedFeature());
+        // 不能开启 WRITE_NUMBERS_AS_STRINGS：它会把所有数字（含 Double）序列化成字符串，
+        // 而 Spring AI 发往 DeepSeek 的请求体里 frequency_penalty 等字段必须是 f32，
+        // 否则 DeepSeek 返回 422 "invalid type: string, expected f32"。
+        // 雪花 ID 的精度问题由前端 json-bigint（storeAsString）解决，无需后端强制转字符串。
+        // builder.featuresToEnable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS.mappedFeature());
     }
 
     @Override

@@ -49,7 +49,10 @@ public class JsonCustomSerializer extends BeanSerializerModifier {
 				@Override
 				public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers)
 						throws IOException {
-					gen.writeString("");
+					// 不能写空字符串：数字字段给 "" 是非法类型。
+					// Spring AI 发往 DeepSeek 的请求体里 frequency_penalty / top_logprobs 等
+					// 为 null 时会落到这里，写成 "" 会被 API 以 422 拒绝（expected f32/u8）。
+					gen.writeNull();
 				}
 			};
 		}
@@ -85,8 +88,9 @@ public class JsonCustomSerializer extends BeanSerializerModifier {
 				@Override
 				public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers)
 						throws IOException {
-					gen.writeStartArray();
-					gen.writeEndArray();
+					// 不能写空数组 []：DeepSeek 要求 tool_calls 若出现则至少 1 个元素，
+					// 空数组会被拒绝（400 "tool_calls: empty array"）。写 null 表示未设置。
+					gen.writeNull();
 				}
 			};
 		}
