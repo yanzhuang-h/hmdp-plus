@@ -208,16 +208,16 @@ onMounted(() => {
 .header {
   display: flex;
   align-items: center;
-  padding: 10px 12px;
+  padding: 12px 16px;
   background-color: var(--c-card);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 0 var(--c-border);
+  border-bottom: 1px solid var(--c-border);
 }
 
 .header-back-btn {
-  padding: 5px;
+  padding: 4px;
   cursor: pointer;
   color: var(--c-text);
   display: flex;
@@ -227,13 +227,14 @@ onMounted(() => {
 .header-title {
   flex: 1;
   text-align: center;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--c-text);
+  letter-spacing: 0.2px;
 }
 
 .header-search {
-  padding: 5px;
+  padding: 4px;
   cursor: pointer;
   color: var(--c-text-sub);
   display: flex;
@@ -243,21 +244,24 @@ onMounted(() => {
 .sort-bar {
   display: flex;
   background-color: var(--c-card);
-  padding: 10px 12px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--c-border);
-  gap: 8px;
+  gap: 6px;
 }
 
 .sort-item {
   flex: 1;
   text-align: center;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--c-text-sub);
-  transition: color 0.18s ease;
+  padding: 6px 0;
+  border-radius: var(--radius-xs);
+  transition: color 0.18s ease, background 0.18s ease;
 }
 .sort-item:active {
   color: var(--c-primary);
+  background: var(--c-primary-soft);
 }
 
 .shop-list {
@@ -268,23 +272,23 @@ onMounted(() => {
 
 .shop-box {
   display: flex;
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 8px;
   background-color: var(--c-card);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--c-border);
   cursor: pointer;
-  box-shadow: var(--shadow-card);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: border-color 0.18s ease, transform 0.18s ease;
 }
 .shop-box:active {
   transform: scale(0.988);
-  box-shadow: 0 1px 6px rgba(17, 24, 39, 0.1);
+  border-color: #e4e4e7;
 }
 
 .shop-img {
-  width: 80px;
-  height: 80px;
-  margin-right: 10px;
+  width: 78px;
+  height: 78px;
+  margin-right: 12px;
   flex-shrink: 0;
 }
 
@@ -292,7 +296,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   display: block;
 }
 
@@ -301,7 +305,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
   min-width: 0;
 }
 
@@ -316,6 +320,7 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  letter-spacing: 0.1px;
 }
 
 .shop-rate {
@@ -327,7 +332,7 @@ onMounted(() => {
 }
 
 .shop-area {
-  color: var(--c-text-sub);
+  color: var(--c-text-muted);
   font-size: 12px;
 }
 
@@ -335,14 +340,15 @@ onMounted(() => {
   color: var(--c-price);
   font-size: 12px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .shop-address {
-  color: var(--c-text-sub);
+  color: var(--c-text-muted);
   font-size: 12px;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   overflow: hidden;
 }
 .shop-address span {

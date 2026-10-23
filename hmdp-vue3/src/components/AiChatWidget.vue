@@ -145,17 +145,17 @@ function clearChat() {
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  border-radius: 24px;
-  background: linear-gradient(135deg, #4f8ef7, #2f6fed);
+  border-radius: var(--radius-sm);
+  background: var(--c-primary);
   color: #fff;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(47, 111, 237, 0.32);
+  box-shadow: 0 6px 18px rgba(77, 107, 254, 0.28);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .ai-fab:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(47, 111, 237, 0.42);
+  box-shadow: 0 10px 22px rgba(77, 107, 254, 0.36);
 }
 
 .ai-panel {
@@ -168,8 +168,8 @@ function clearChat() {
   display: flex;
   flex-direction: column;
   background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
   overflow: hidden;
 }
 
@@ -178,7 +178,7 @@ function clearChat() {
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: linear-gradient(135deg, #4f8ef7, #2f6fed);
+  background: var(--c-primary);
   color: #fff;
 }
 .ai-title {
@@ -218,7 +218,7 @@ function clearChat() {
 .ai-bubble {
   max-width: 78%;
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: var(--radius);
   font-size: 13px;
   line-height: 1.6;
   white-space: pre-wrap;

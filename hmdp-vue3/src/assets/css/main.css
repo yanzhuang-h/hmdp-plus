@@ -1,42 +1,59 @@
 html {
     font-size: 12px;
     width: 100%;
+    -webkit-text-size-adjust: 100%;
 }
 body{
     margin: 0;
+    background: #fafafa;
+    color: #16181d;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
+                 "Microsoft YaHei", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 html,body,#app{
     height: 100%;
 }
 
 /* ============================================================
-   设计变量（全局）
-   配色：中性灰底 + 柔和蓝主色 + 柔和橙仅用于价格
+   设计变量
+   参考 DeepSeek 的设计语言：蓝紫主色、细边框、克制圆角、大量留白
    ============================================================ */
 :root {
     /* 主色 */
-    --c-primary: #2f6fed;
-    --c-primary-dark: #1f5bd4;
-    --c-primary-soft: #eef4ff;
+    --c-primary: #4d6bfe;
+    --c-primary-hover: #3b58e8;
+    --c-primary-soft: #eef1ff;
 
-    /* 价格/交易强调色 */
-    --c-price: #ef6c3f;
+    /* 价格 / 交易强调（克制红，仅用于金额与已赞） */
+    --c-price: #e5484d;
 
     /* 中性色 */
-    --c-bg: #f7f8fa;
+    --c-bg: #fafafa;
     --c-card: #ffffff;
-    --c-text: #1f2329;
+    --c-text: #16181d;
     --c-text-sub: #6b7280;
-    --c-text-muted: #9ca3af;
-    --c-border: rgba(17, 24, 39, 0.06);
-    --c-fill: #f2f3f5;
+    --c-text-muted: #a1a1aa;
+    --c-border: #f0f0f2;
+    --c-fill: #f7f7f8;
 
-    /* 圆角与阴影 */
+    /* 圆角：克制，越小越"锐利高级" */
+    --radius-xs: 6px;
     --radius-sm: 8px;
-    --radius: 12px;
-    --radius-lg: 16px;
-    --shadow-card: 0 2px 10px rgba(17, 24, 39, 0.06);
-    --shadow-float: 0 8px 24px rgba(17, 24, 39, 0.12);
+    --radius: 10px;
+    --radius-lg: 14px;
+
+    /* 阴影：双层极淡，主要靠 1px 边框分层 */
+    --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
+    --shadow-float: 0 12px 32px rgba(16, 24, 40, 0.10);
+
+    /* 间距 */
+    --gap-1: 4px;
+    --gap-2: 8px;
+    --gap-3: 12px;
+    --gap-4: 16px;
+    --gap-5: 20px;
 }
 
 .el-tabs__item {
@@ -49,8 +66,8 @@ html,body,#app{
     font-weight: 600;
 }
 .el-tabs__active-bar {
-    height: 3px;
-    border-radius: 2px;
+    height: 2px;
+    border-radius: 1px;
     background-color: var(--c-primary);
     background-image: none;
 }
@@ -63,28 +80,32 @@ html,body,#app{
     display: flex;
     justify-content: space-around;
     align-items: center;
-    box-shadow: 0 -1px 0 var(--c-border);
+    border-top: 1px solid var(--c-border);
+    box-shadow: none;
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 999;
-    background: var(--c-card);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
 }
 .foot .add-btn {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     background: var(--c-primary);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(47, 111, 237, 0.32);
-    transition: transform 0.18s ease;
+    box-shadow: 0 4px 12px rgba(77, 107, 254, 0.28);
+    transition: transform 0.18s ease, background 0.18s ease;
 }
 .foot .add-btn:active {
     transform: scale(0.92);
+    background: var(--c-primary-hover);
 }
 .foot-box{
     width: 20%;
@@ -95,15 +116,16 @@ html,body,#app{
     cursor: pointer;
 }
 .foot-view {
-    font-size: 22px;
+    font-size: 21px;
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 .foot-text{
-    font-size: 11px;
-    margin-top: 3px;
+    font-size: 10px;
+    margin-top: 2px;
+    letter-spacing: 0.2px;
 }
 .foot-text, .foot-view{
     text-align: center;
@@ -117,21 +139,21 @@ html,body,#app{
     margin-right: 0;
 }
 
-/* 秒杀确认遮罩的强化视觉效果 */
+/* 秒杀确认遮罩 */
 .seckill-overlay {
     z-index: 5000 !important;
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(4px);
 }
 .seckill-overlay .el-loading-spinner {
     padding: 24px 28px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.10);
+    box-shadow: var(--shadow-float);
 }
 .seckill-overlay .el-loading-spinner .circular {
-    width: 64px;
-    height: 64px;
-    border-width: 6px;
+    width: 60px;
+    height: 60px;
+    border-width: 5px;
 }
 .seckill-overlay .el-loading-spinner .path {
     stroke: #fff;
@@ -140,7 +162,7 @@ html,body,#app{
 .seckill-overlay .el-loading-text {
     margin-top: 12px;
     color: #fff;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     letter-spacing: 0.5px;
 }
