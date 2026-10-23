@@ -9,6 +9,7 @@ import { ref } from 'vue'
 import router from '@/router'
 import FootBar from '@/components/FootBar.vue'
 import { User } from '@element-plus/icons-vue'
+import { resolveImage, firstImage } from '@/utils/image'
 const isReachBottom = ref(false)
 const types = ref([])
 const blogs = ref([])
@@ -34,11 +35,9 @@ const queryHotBlogsScroll = async () => {
     const { data } = await indexQueryHotBlogsScroll()
     console.log('获取首页博客数据:', data)
     data.forEach((b) => {
-      if (b && b.images) {
-        b.img = b.images.split(',')[0]
-      } else {
-        b.img = ''
-      }
+      if (!b) return
+      // 取第一张图并解析为可用地址；无图时留空，由模板兜底
+      b.img = firstImage(b.images, '')
     })
     blogs.value = blogs.value.concat(data)
   } catch (error) {
@@ -118,7 +117,7 @@ const toInfo = () => {
       @click="toShopList(t.id, t.name)"
     >
       <div class="type-view">
-        <img :src="'src/assets/imgs' + t.icon" alt="" />
+        <img :src="resolveImage(t.icon)" alt="" />
       </div>
       <div class="type-text">{{ t.name }}</div>
     </div>
@@ -126,13 +125,13 @@ const toInfo = () => {
   <div class="blog-list" @scroll="onScroll">
     <div class="blog-box" v-for="b in blogs" :key="b.id">
       <div class="blog-img" @click="toBlogDetail(b)">
-        <img :src="'src/assets' + b.img" alt="" />
+        <img :src="resolveImage(b.img)" alt="" />
       </div>
       <div class="blog-title">{{ b.title }}</div>
       <div class="blog-foot">
         <div class="blog-user-icon">
           <img
-            :src="b.icon || 'src/assets/imgs/icons/default-icon.png'"
+            :src="resolveImage(b.icon)"
             alt=""
           />
         </div>

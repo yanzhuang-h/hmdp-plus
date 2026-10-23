@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores'
 import { getUser, getUserInfo } from '@/api/user'
+import { resolveImage } from '@/utils/image'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -63,14 +64,7 @@ const goBack = () => {
         <div class="info-item">
           <div class="info-label">头像</div>
           <div class="info-btn">
-            <img
-              width="35"
-              :src="
-                '/src/assets' + user.icon ||
-                '/src/assets/imgs/icons/default-icon.png'
-              "
-              alt="用户头像"
-            />
+            <img width="35" :src="resolveImage(user.icon)" alt="用户头像" />
             <div>
               <el-icon><ArrowRight /></el-icon>
             </div>

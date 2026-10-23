@@ -6,6 +6,7 @@ import { ElLoading } from 'element-plus'
 import { getShopById } from '@/api/shop'
 import { getVoucherList, issueSeckillAccessToken, seckillVoucher, getSeckillOrderId, getVoucherOrderIdByVoucherId, cancelVoucherOrder, subscribeVoucher, unsubscribeVoucher, getSubscribeStatusBatch } from '@/api/voucher'
 import { useUserStore } from '@/stores'
+import { splitImages } from '@/utils/image'
 
 const router = useRouter()
 const route = useRoute()
@@ -104,7 +105,7 @@ const queryShopById = async (shopId) => {
   try {
     const { data } = await getShopById(shopId)
     console.log('getShopByIddata', data)
-    data.images = data.images.split(',')
+    data.images = splitImages(data.images)
     shop.value = data
   } catch (error) {
     console.error(error)

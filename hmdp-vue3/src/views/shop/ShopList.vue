@@ -88,6 +88,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ArrowLeft, ArrowDown, Search, Location } from '@element-plus/icons-vue'
 import { getShopList, getShopTypeList } from '@/api/shop'
 import { throttle } from '@/utils/scroll'
+import { firstImage } from '@/utils/image'
 
 const router = useRouter()
 const route = useRoute()
@@ -122,7 +123,11 @@ const queryShops = async () => {
   try {
     const { data } = await getShopList(params.value)
     if (!data) return
-    data.forEach((s) => (s.images = s.images.split(',')[0]))
+    data.forEach((s) => {
+      if (!s) return
+      // 商铺图片多为外部绝对地址，firstImage 会原样返回并处理空值
+      s.images = firstImage(s.images, '')
+    })
     shops.value = shops.value.concat(data)
   } catch (error) {
     console.error(error)

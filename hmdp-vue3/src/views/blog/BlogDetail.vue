@@ -13,6 +13,7 @@ import {
 } from '@/api/blog/blog'
 import { getUser } from '@/api/user'
 import { formatTime } from '@/utils/format'
+import { resolveImage, firstImage, splitImages } from '@/utils/image'
 
 const route = useRoute()
 const router = useRouter()
@@ -45,7 +46,7 @@ const initData = async () => {
     console.log('博客数据:', blogData)
 
     if (blogData && blogData.data.images) {
-      blogData.data.images = blogData.data.images.split(',')
+      blogData.data.images = splitImages(blogData.data.images)
     } else {
       blogData.data.images = []
     }
@@ -76,7 +77,7 @@ const queryShopById = async (shopId) => {
     const { data } = await getShopById(shopId)
     console.log('店铺数据:', data)
     if (data && data.images) {
-      data.image = data.images.split(',')[0]
+      data.image = firstImage(data.images, '')
     } else {
       data.image = ''
     }
@@ -103,7 +104,7 @@ const addLike = async () => {
   try {
     await likeBlog(blog.value.id)
     const { data } = await getBlogById(blog.value.id)
-    data.images = data.images.split(',')
+    data.images = splitImages(data.images)
     blog.value = data
     await queryLikeList(blog.value.id)
   } catch (error) {
@@ -294,7 +295,7 @@ const go = (index) => {
       >
         <div class="swiper-item" v-for="(img, i) in blog.images" :key="i">
           <img
-            :src="`/src/assets${img}`"
+            :src="img"
             alt=""
             style="width: 100%"
             height="100%"
@@ -304,13 +305,7 @@ const go = (index) => {
 
       <div class="basic">
         <div class="basic-icon" @click="toOtherInfo">
-          <img
-            :src="
-              `/src/assets${blog.icon}` ||
-              '/src/assets/imgs/icons/default-icon.png'
-            "
-            alt=""
-          />
+          <img :src="resolveImage(blog.icon)" alt="" />
         </div>
         <div class="basic-info">
           <div class="name">{{ blog.name }}</div>
@@ -332,13 +327,7 @@ const go = (index) => {
       <div class="shop-basic">
         <div class="shop-icon">
           <img
-            :src="
-              shop.image
-                ? shop.image.startsWith('http')
-                  ? shop.image
-                  : `/src/assets${shop.image}`
-                : '/src/assets/imgs/icons/default-icon.png'
-            "
+            :src="resolveImage(shop.image)"
             alt=""
           />
         </div>
@@ -372,7 +361,7 @@ const go = (index) => {
         </div>
         <div class="zan-list">
           <div class="user-icon-mini" v-for="u in likes" :key="u.id">
-            <img :src="u.icon || '/imgs/icons/default-icon.png'" alt="" />
+            <img :src="resolveImage(u.icon)" alt="" />
           </div>
           <div style="margin-left: 10px; text-align: center; line-height: 24px">
             {{ blog.liked }}人点赞

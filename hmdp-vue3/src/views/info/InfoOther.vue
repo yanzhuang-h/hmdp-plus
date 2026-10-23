@@ -10,6 +10,7 @@ import {
   follow,
   getCommonFollows
 } from '@/api/follow'
+import { resolveImage, firstImage } from '@/utils/image'
 
 const router = useRouter()
 const route = useRoute()
@@ -146,13 +147,7 @@ const toOtherInfo = (id) => {
 
     <div class="basic">
       <div class="basic-icon">
-        <img
-          :src="
-            '/src/assets' + user.icon ||
-            '/src/assets/imgs/icons/default-icon.png'
-          "
-          alt=""
-        />
+        <img :src="resolveImage(user.icon)" alt="" />
       </div>
       <div class="basic-info">
         <div class="name">{{ user.nickName }}</div>
@@ -173,7 +168,7 @@ const toOtherInfo = (id) => {
         <el-tab-pane label="笔记" name="1">
           <div v-for="b in blogs" :key="b.id" class="blog-item">
             <div class="blog-img">
-              <img :src="'/src/assets' + b.images.split(',')[0]" alt="" />
+              <img :src="firstImage(b.images)" alt="" />
             </div>
             <div class="blog-info">
               <div class="blog-title" v-html="b.title"></div>
@@ -190,13 +185,7 @@ const toOtherInfo = (id) => {
           <div>你们都关注了：</div>
           <div class="follow-info" v-for="u in commonFollows" :key="u.id">
             <div class="follow-info-icon" @click="toOtherInfo(u.id)">
-              <img
-                :src="
-                  '/src/assets' + u.icon ||
-                  '/src/assets/imgs/icons/default-icon.png'
-                "
-                alt=""
-              />
+              <img :src="resolveImage(u.icon)" alt="" />
             </div>
             <div class="follow-info-name">
               <div class="name">{{ u.nickName }}</div>

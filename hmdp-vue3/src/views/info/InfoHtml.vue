@@ -10,6 +10,7 @@ import {
   indexAddLike,
   indexQueryBlogById
 } from '@/api/user'
+import { resolveImage, firstImage } from '@/utils/image'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -91,7 +92,9 @@ const queryBlogsOfFollow = (clear) => {
         return
       }
       const { list, ...newParams } = data
-      list.forEach((b) => (b.img = b.images.split(',')[0]))
+      list.forEach((b) => {
+        if (b) b.img = firstImage(b.images, '')
+      })
       blogs2.value = clear ? list : blogs2.value.concat(list)
       Object.assign(params, newParams)
     })
@@ -174,13 +177,7 @@ const onScroll = (e) => {
 
     <div class="basic">
       <div class="basic-icon">
-        <img
-          :src="
-            '/src/assets' + user.icon ||
-            '/src/assets/imgs/icons/default-icon.png'
-          "
-          alt="用户头像"
-        />
+        <img :src="resolveImage(user.icon)" alt="用户头像" />
       </div>
       <div class="basic-info">
         <div class="name">{{ user.nickName }}</div>
@@ -202,10 +199,7 @@ const onScroll = (e) => {
         <el-tab-pane label="笔记" name="1">
           <div v-for="b in blogs" :key="b.id" class="blog-item">
             <div class="blog-img">
-              <img
-                :src="'/src/assets' + b.images.split(',')[0]"
-                alt="博客图片"
-              />
+              <img :src="firstImage(b.images)" alt="博客图片" />
             </div>
             <div class="blog-info">
               <div class="blog-title">{{ b.title }}</div>
@@ -225,18 +219,12 @@ const onScroll = (e) => {
           <div class="blog-list" @scroll="onScroll">
             <div class="blog-box" v-for="b in blogs2" :key="b.id">
               <div class="blog-img2" @click="router.push(`/blog/${b.id}`)">
-                <img :src="'/src/assets' + b.img" alt="博客图片" />
+                <img :src="resolveImage(b.img)" alt="博客图片" />
               </div>
               <div class="blog-title">{{ b.title }}</div>
               <div class="blog-foot">
                 <div class="blog-user-icon">
-                  <img
-                    :src="
-                      '/src/assets' + b.icon ||
-                      '/src/assets/imgs/icons/default-icon.png'
-                    "
-                    alt="用户头像"
-                  />
+                  <img :src="resolveImage(b.icon)" alt="用户头像" />
                 </div>
                 <div class="blog-user-name">{{ b.name }}</div>
                 <div class="blog-liked" @click="addLike(b)">
