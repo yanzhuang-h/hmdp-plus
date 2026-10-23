@@ -11,6 +11,7 @@ import org.javaup.service.ISeckillVoucherService;
 import org.javaup.service.IShopService;
 import org.javaup.service.IVoucherOrderService;
 import org.javaup.service.IVoucherService;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
@@ -105,11 +106,33 @@ public class McpShopTools {
         }
     }
 
-    @Tool(description = "根据订单ID查询优惠券订单状态，返回订单状态、下单时间、支付时间、核销时间、退款时间")
-    public String queryOrderStatus(@ToolParam(description = "订单ID（雪花ID，例如 2112869162882732034）") Long orderId) {
+    /**
+     * 查询当前登录用户的订单状态。
+     *
+     * <p><b>越权防护</b>：用户身份由服务端通过 {@link ToolContext} 注入（应用内对话取自登录态），
+     * <b>不接受模型传入的 userId</b>。MCP 外部调用没有身份上下文，因此直接拒绝——
+     * 订单属于用户私有数据，不通过 MCP 暴露。
+     *
+     * <p>订单不属于当前用户时统一返回「未找到」，不暴露订单是否存在。
+     */
+    @Tool(description = "查询当前登录用户本人的优惠券订单状态。只能查询自己的订单，不能查询他人的订单。")
+    public String queryOrderStatus(
+            @ToolParam(description = "订单ID（雪花ID，例如 2112869162882732034）") Long orderId,
+            ToolContext toolContext) {
         try {
+            Object uid = toolContext == null ? null : toolContext.getContext().get("userId");
+            if (!(uid instanceof Long userId)) {
+                log.warn("[MCP] queryOrderStatus 拒绝：无用户身份上下文 orderId={}", orderId);
+                return "无法确认当前用户身份。订单状态查询仅支持已登录的应用内对话；"
+                        + "外部 MCP 客户端不提供订单数据。";
+            }
             VoucherOrder order = voucherOrderService.getById(orderId);
             if (order == null) {
+                return "未找到ID为 " + orderId + " 的订单";
+            }
+            if (!userId.equals(order.getUserId())) {
+                // 越权尝试：不泄露订单是否存在
+                log.warn("[MCP] queryOrderStatus 越权拦截 userId={} 尝试查询 orderId={}", userId, orderId);
                 return "未找到ID为 " + orderId + " 的订单";
             }
             Map<String, Object> r = new LinkedHashMap<>();
