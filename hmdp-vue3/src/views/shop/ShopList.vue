@@ -56,7 +56,7 @@
               disabled
               :max="5"
               :value="s.score / 10"
-              text-color="#F63"
+              text-color="#043c75"
               show-score
             />
             <span>{{ s.comments }}条</span>

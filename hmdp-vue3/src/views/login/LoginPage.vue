@@ -96,7 +96,7 @@ const rules = {
         </div>
         <el-button
           @click="login"
-          style="width: 100%; background-color: #f63; color: #fff"
+          style="width: 100%; background-color: #043c75; color: #fff"
           >登录</el-button
         >
         <div style="text-align: right; color: #333333; margin: 5px 0">

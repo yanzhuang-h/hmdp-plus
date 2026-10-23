@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { ArrowLeft, ArrowRight, Location, Timer } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, Location, Timer, Van, Phone } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
 import { getShopById } from '@/api/shop'
 import { getVoucherList, issueSeckillAccessToken, seckillVoucher, getSeckillOrderId, getVoucherOrderIdByVoucherId, cancelVoucherOrder, subscribeVoucher, unsubscribeVoucher, getSubscribeStatusBatch } from '@/api/voucher'
@@ -358,7 +358,7 @@ onMounted(() => {
           disabled
           :max="5"
           :value="shop.score / 10"
-          text-color="#F63"
+          text-color="#043c75"
           show-score
         />
         <span>{{ shop.comments }}条</span>
@@ -386,17 +386,11 @@ onMounted(() => {
         >
           |
         </div>
-        <div style="margin: 0 5px">
-          <img
-            src="https://p0.meituan.net/travelcube/bf684aa196c870810655e45b1e52ce843484.png@24w_16h_40q"
-            alt=""
-          />
+        <div style="margin: 0 6px; display: flex; align-items: center">
+          <el-icon :size="19" color="var(--c-text-sub)"><Van /></el-icon>
         </div>
-        <div>
-          <img
-            src="https://p0.meituan.net/travelcube/9277ace32123e0c9f59dedf4407892221566.png@24w_24h_40q"
-            alt=""
-          />
+        <div style="display: flex; align-items: center">
+          <el-icon :size="18" color="var(--c-text-sub)"><Phone /></el-icon>
         </div>
       </div>
     </div>
@@ -668,7 +662,7 @@ onMounted(() => {
 }
 
 .voucher-icon {
-  background-color: #f63;
+  background-color: #043c75;
   color: #fff;
   padding: 2px 5px;
   border-radius: 2px;
@@ -724,7 +718,7 @@ onMounted(() => {
 }
 
 .voucher-price {
-  color: #f63;
+  color: #043c75;
   font-size: 16px;
   display: flex;
   align-items: baseline;
@@ -738,11 +732,11 @@ onMounted(() => {
 }
 .voucher-price span {
   font-size: 14px;
-  color: #ff6d6d;
+  color: #043c75;
   padding: 0 6px;
   line-height: 18px;
   border-radius: 9px;
-  background-color: #fff2f0;
+  background-color: #f9f0d8;
 }
 
 .voucher-right {
@@ -766,7 +760,7 @@ onMounted(() => {
   font-weight: 600;
   letter-spacing: 0.5px;
   color: #fff;
-  background: linear-gradient(135deg, #ff7a45 0%, #ff4d4f 100%);
+  background: var(--c-primary);
   box-shadow: 0 6px 14px rgba(255, 77, 79, 0.25);
 }
 
@@ -795,8 +789,8 @@ onMounted(() => {
   padding: 0 6px;
   line-height: 18px;
   border-radius: 9px;
-  background-color: #fff5f0;
-  color: #ff4d4f;
+  background-color: #f9f0d8;
+  color: #043c75;
   margin: 0 2px;
 }
 
@@ -818,8 +812,8 @@ onMounted(() => {
   padding: 2px 8px;
   line-height: 20px;
   border-radius: 10px;
-  background-color: #fff2f0;
-  color: #ff4d4f;
+  background-color: #f9f0d8;
+  color: #043c75;
   font-weight: 600;
 }
 .cancel-link {
@@ -864,8 +858,8 @@ onMounted(() => {
   padding: 4px 12px;
   line-height: 20px;
   border-radius: 12px;
-  border: 1px solid #ffa940;
-  background-color: #ffa940;
+  border: 1px solid #ebd4a2;
+  background-color: #ebd4a2;
   color: #fff;
   cursor: pointer;
 }
@@ -994,7 +988,7 @@ onMounted(() => {
 :global(.seckill-overlay .el-loading-spinner .circular) {
   width: 42px;
   height: 42px;
-  stroke: #ff4d4f; /* 与主题色协调 */
+  stroke: #043c75; /* 与主题色协调 */
 }
 
 :global(.seckill-overlay .el-loading-text) {

@@ -180,3 +180,36 @@ html,body,#app{
     font-weight: 600;
     letter-spacing: 0.5px;
 }
+
+/* ============================================================
+   Element Plus 主题变量覆盖
+   不覆盖的话，按钮、链接、单选、分页等组件仍使用默认蓝 #409eff，
+   与我们的深蓝主题冲突。
+   ============================================================ */
+:root {
+    --el-color-primary: #043c75;
+    --el-color-primary-light-3: #4a6f9e;
+    --el-color-primary-light-5: #6b8ab0;
+    --el-color-primary-light-7: #a3b7cc;
+    --el-color-primary-light-8: #c2cfdd;
+    --el-color-primary-light-9: #e6ebf1;
+    --el-color-primary-dark-2: #032e5a;
+
+    --el-text-color-primary: #1a1f26;
+    --el-text-color-regular: #6f6a60;
+    --el-text-color-secondary: #a8a196;
+    --el-border-color: #ebe4d6;
+    --el-border-color-light: #f0ebe0;
+    --el-fill-color-blank: #ffffff;
+    --el-bg-color: #ffffff;
+    --el-border-radius-base: 8px;
+}
+/* 链接：全局统一为主题色，避免浏览器默认蓝 (#0000EE) 破坏配色 */
+a {
+    color: var(--c-primary);
+    text-decoration: none;
+    transition: color 0.18s ease;
+}
+a:active {
+    color: var(--c-primary-hover);
+}

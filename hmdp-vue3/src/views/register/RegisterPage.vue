@@ -127,7 +127,7 @@ const rules = {
         <el-form-item>
           <el-button
             @click="login"
-            style="width: 100%; background-color: #f63; color: #fff"
+            style="width: 100%; background-color: #043c75; color: #fff"
             >登录</el-button
           >
         </el-form-item>

@@ -7,23 +7,25 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 2px solid #043c75;
+    border-bottom: 1px solid var(--c-border);
 }
 .header-back-btn{
     width: 10%;
-    color: #043c75;
+    color: var(--c-text);
     font-size: 22px;
 }
 .header-title {
     width: 90%;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--c-text);
     font-family: Hiragino Sans GB,Arial,Helvetica,"\5B8B\4F53",sans-serif;
 }
 
 .content{
     height: 93%;
-    background-color: #f7f5f5;
+    background-color: var(--c-bg);
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -48,13 +50,13 @@ input[type="radio"] + label::before {
     height: 0.7em;
     margin-right: .4em;
     border-radius: 50%;
-    border: 2px solid #F63;
+    border: 2px solid var(--c-primary);
     text-indent: .15em;
     line-height: 1; 
     padding: .2em;
 }
 input[type="radio"]:checked + label::before {
-    background-color: #F63;
+    background-color: var(--c-primary);
     background-clip: content-box;
     padding: .2em;
 }
