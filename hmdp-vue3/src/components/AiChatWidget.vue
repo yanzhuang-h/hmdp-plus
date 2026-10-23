@@ -146,16 +146,16 @@ function clearChat() {
   gap: 6px;
   padding: 10px 16px;
   border-radius: 24px;
-  background: linear-gradient(135deg, #ff9a3c, #ff6633);
+  background: linear-gradient(135deg, #4f8ef7, #2f6fed);
   color: #fff;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(255, 102, 51, 0.35);
+  box-shadow: 0 6px 18px rgba(47, 111, 237, 0.32);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .ai-fab:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(255, 102, 51, 0.45);
+  box-shadow: 0 10px 22px rgba(47, 111, 237, 0.42);
 }
 
 .ai-panel {
@@ -178,7 +178,7 @@ function clearChat() {
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: linear-gradient(135deg, #ff9a3c, #ff6633);
+  background: linear-gradient(135deg, #4f8ef7, #2f6fed);
   color: #fff;
 }
 .ai-title {
@@ -199,7 +199,7 @@ function clearChat() {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  background: #f7f8fa;
+  background: var(--c-bg);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -226,11 +226,11 @@ function clearChat() {
 }
 .ai-msg.assistant .ai-bubble {
   background: #fff;
-  color: #333;
+  color: var(--c-text);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 .ai-msg.user .ai-bubble {
-  background: #ff6633;
+  background: var(--c-primary);
   color: #fff;
 }
 .ai-msg.is-error .ai-bubble {
@@ -272,7 +272,7 @@ function clearChat() {
   display: flex;
   gap: 8px;
   padding: 12px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--c-border);
   background: #fff;
 }
 .ai-input :deep(.el-textarea__inner) {

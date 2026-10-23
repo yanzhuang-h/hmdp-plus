@@ -1,21 +1,20 @@
 /* ============================================================
-   首页样式 · 视觉升级（方案 A）
-   原则：类名与布局属性（width / height / display / flex）保持不变，
-        只调整颜色、圆角、阴影、间距，保证结构不塌。
+   首页样式
+   配色：白底顶栏 + 浅灰搜索框 + 柔和蓝主色，价格用柔和橙
    ============================================================ */
 
 /* ---------- 顶部搜索栏 ---------- */
 .search-bar {
-    background: linear-gradient(135deg, #ff8a4c 0%, #ff5a2b 100%);
-    color: #fff;
+    background: var(--c-card);
+    color: var(--c-text);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     padding: 10px 14px;
     height: auto;
-    min-height: 58px;
-    box-shadow: 0 2px 10px rgba(255, 90, 43, 0.18);
+    min-height: 56px;
+    box-shadow: 0 1px 0 var(--c-border);
     position: relative;
     z-index: 2;
 }
@@ -26,14 +25,15 @@
     align-items: center;
     font-size: 20px;
     cursor: pointer;
+    color: var(--c-text-sub);
 }
 
 .city-btn {
     flex-shrink: 0;
-    padding: 6px 12px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(4px);
+    padding: 5px 12px;
+    border-radius: 16px;
+    background: var(--c-fill);
+    color: var(--c-text);
     font-size: 13px;
     line-height: 1.2;
 }
@@ -43,11 +43,15 @@
     max-width: 72%;
 }
 
-/* 搜索框圆角与内边距 */
+/* 搜索框：浅灰底、无边框 */
 .search-input .el-input__wrapper {
-    border-radius: 20px;
+    border-radius: 18px;
     padding: 2px 14px;
-    box-shadow: 0 1px 4px rgba(17, 24, 39, 0.08);
+    background: var(--c-fill);
+    box-shadow: none;
+}
+.search-input .el-input__inner::placeholder {
+    color: var(--c-text-muted);
 }
 
 /* ---------- 分类区 ---------- */
@@ -57,11 +61,11 @@
     flex-wrap: wrap;
     justify-content: space-around;
     align-content: center;
-    background: #fff;
+    background: var(--c-card);
     margin: 4px;
     padding: 6px 2px 0;
-    border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(17, 24, 39, 0.06);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
 }
 
 .type-box {
@@ -77,11 +81,11 @@
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
-    border-radius: 12px;
+    border-radius: var(--radius);
 }
 
 .type-text {
-    color: #374151;
+    color: var(--c-text);
     font-size: 11px;
     margin-top: 0;
     margin-bottom: 8px;
@@ -93,7 +97,7 @@
 
 /* ---------- 达人探店列表 ---------- */
 .blog-list {
-    background-color: #f5f6f8;
+    background-color: var(--c-bg);
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -107,10 +111,10 @@
 
 .blog-box {
     width: 48.5%;
-    background-color: #fff;
+    background-color: var(--c-card);
     margin: 5px 0;
-    border-radius: 14px;
-    box-shadow: 0 2px 10px rgba(17, 24, 39, 0.07);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
     overflow: hidden;
     transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
@@ -132,7 +136,7 @@
     height: 40px;
     width: auto;
     overflow: hidden;
-    color: #1f2329;
+    color: var(--c-text);
     font-size: 12px;
     line-height: 1.45;
     display: -webkit-box;
@@ -146,7 +150,7 @@
     justify-content: space-between;
     margin: 8px 0 0;
     padding: 0 10px 10px;
-    color: #6b7280;
+    color: var(--c-text-sub);
     font-size: 11px;
 }
 
@@ -179,6 +183,7 @@
     justify-content: flex-end;
     gap: 3px;
     cursor: pointer;
+    color: var(--c-text-muted);
 }
 
 .blog-liked img {

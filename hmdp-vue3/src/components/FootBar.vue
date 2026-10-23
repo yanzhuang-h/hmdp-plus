@@ -1,6 +1,6 @@
 <script setup>
 import router from '@/router'
-import { House, Location, ChatDotRound, User } from '@element-plus/icons-vue'
+import { House, Location, ChatDotRound, User, Plus } from '@element-plus/icons-vue'
 defineProps({
   activeBtn: {
     type: Number,
@@ -37,7 +37,9 @@ const toPage = (i) => {
       <div class="foot-text">地图</div>
     </div>
     <div class="foot-box" @click="toPage(0)">
-      <img class="add-btn" src="../assets/imgs/add.png" alt="" />
+      <div class="add-btn">
+        <el-icon :size="22"><Plus /></el-icon>
+      </div>
     </div>
     <div
       class="foot-box"

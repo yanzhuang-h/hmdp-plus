@@ -202,24 +202,24 @@ onMounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f6f8;
+  background: var(--c-bg);
 }
 
 .header {
   display: flex;
   align-items: center;
   padding: 10px 12px;
-  background-color: #fff;
+  background-color: var(--c-card);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.06);
+  box-shadow: 0 1px 0 var(--c-border);
 }
 
 .header-back-btn {
   padding: 5px;
   cursor: pointer;
-  color: #1f2329;
+  color: var(--c-text);
   display: flex;
   align-items: center;
 }
@@ -229,22 +229,22 @@ onMounted(() => {
   text-align: center;
   font-size: 17px;
   font-weight: 600;
-  color: #1f2329;
+  color: var(--c-text);
 }
 
 .header-search {
   padding: 5px;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--c-text-sub);
   display: flex;
   align-items: center;
 }
 
 .sort-bar {
   display: flex;
-  background-color: #fff;
+  background-color: var(--c-card);
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+  border-bottom: 1px solid var(--c-border);
   gap: 8px;
 }
 
@@ -253,11 +253,11 @@ onMounted(() => {
   text-align: center;
   cursor: pointer;
   font-size: 13px;
-  color: #6b7280;
+  color: var(--c-text-sub);
   transition: color 0.18s ease;
 }
 .sort-item:active {
-  color: #ff6633;
+  color: var(--c-primary);
 }
 
 .shop-list {
@@ -270,10 +270,10 @@ onMounted(() => {
   display: flex;
   padding: 10px;
   margin-bottom: 8px;
-  background-color: #fff;
+  background-color: var(--c-card);
   border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
+  box-shadow: var(--shadow-card);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 .shop-box:active {
@@ -312,7 +312,7 @@ onMounted(() => {
 .shop-title {
   font-size: 15px;
   font-weight: 600;
-  color: #1f2329;
+  color: var(--c-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -323,22 +323,22 @@ onMounted(() => {
   align-items: center;
   gap: 10px;
   font-size: 12px;
-  color: #6b7280;
+  color: var(--c-text-sub);
 }
 
 .shop-area {
-  color: #6b7280;
+  color: var(--c-text-sub);
   font-size: 12px;
 }
 
 .shop-avg {
-  color: #ff6633;
+  color: var(--c-price);
   font-size: 12px;
   font-weight: 600;
 }
 
 .shop-address {
-  color: #6b7280;
+  color: var(--c-text-sub);
   font-size: 12px;
   display: flex;
   align-items: center;

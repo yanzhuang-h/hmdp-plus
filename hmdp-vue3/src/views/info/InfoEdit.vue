@@ -223,7 +223,7 @@ const goBack = () => {
 }
 
 a {
-  color: #ff6633;
+  color: #2f6fed;
   text-decoration: none;
 }
 </style>
