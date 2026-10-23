@@ -4,8 +4,10 @@ import { useRoute } from 'vue-router'
 import AiChatWidget from '@/components/AiChatWidget.vue'
 
 const route = useRoute()
-// 登录、注册页不显示客服入口
-const showChat = computed(() => !['LoginPage', 'RegisterPage'].includes(route.name))
+
+// 这些页面不显示客服入口：登录/注册（未登录）与发布笔记（避免遮挡编辑区）
+const HIDDEN_PATHS = ['/login', '/register', '/blogEdit']
+const showChat = computed(() => !HIDDEN_PATHS.includes(route.path))
 </script>
 
 <template>

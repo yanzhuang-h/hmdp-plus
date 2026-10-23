@@ -1,8 +1,9 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowRight, Search } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, Camera, Close, Search } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores'
+import { resolveImage } from '@/utils/image'
 import {
   uploadBlogImage,
   deleteBlogImage,
@@ -168,7 +169,7 @@ const publishBlog = async () => {
   <div class="blog-edit">
     <div class="header">
       <div class="left" @click="goBack">
-        <i class="iconfont icon-arrow-left"></i>
+        <el-icon :size="20"><ArrowLeft /></el-icon>
       </div>
       <div class="title">发布笔记</div>
       <div class="right" @click="publishBlog">发布</div>
@@ -183,14 +184,14 @@ const publishBlog = async () => {
         style="display: none"
       />
       <div class="upload-btn" @click="openFileDialog">
-        <i class="iconfont icon-camera"></i>
+        <el-icon :size="22"><Camera /></el-icon>
         <span>上传图片</span>
       </div>
       <div class="pic-list" v-if="fileList.length > 0">
         <div class="pic-box" v-for="(f, i) in fileList" :key="i">
-          <img :src="`/src/assets${f}`" alt="图片" />
+          <img :src="resolveImage(f)" alt="图片" />
           <div class="delete" @click="deletePic(i)">
-            <i class="iconfont icon-close"></i>
+            <el-icon :size="14"><Close /></el-icon>
           </div>
         </div>
       </div>
