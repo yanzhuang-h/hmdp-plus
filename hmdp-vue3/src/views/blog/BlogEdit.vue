@@ -91,7 +91,7 @@ const selectShop = (shop) => {
 //   createBlog(data)
 //     .then(() => {
 //       ElMessage.success('发布成功')
-//       router.push('/infoHtml')
+//       router.push('/InfoHtml')
 //     })
 //     .catch((err) => {
 //       ElMessage.error(err.message || '发布失败')
@@ -157,7 +157,7 @@ const publishBlog = async () => {
 
     await createBlog(blogData)
     ElMessage.success('发布成功')
-    router.push('/infoHtml')
+    router.push('/InfoHtml')
   } catch (error) {
     console.error('发布失败', error)
     ElMessage.error('发布失败')

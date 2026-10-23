@@ -159,7 +159,7 @@ const toOtherInfo = () => {
   console.log('blog.value.userId', blog.value.userId)
   console.log('user.value.id', user.value.id)
   if (blog.value.userId === user.value.id) {
-    router.push('/infoHtml')
+    router.push('/InfoHtml')
   } else {
     router.push(`/InfoOther?id=${blog.value.userId}`)
   }

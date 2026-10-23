@@ -108,7 +108,7 @@ const goBack = () => {
 }
 
 const toEdit = () => {
-  router.push('/infoEdit')
+  router.push('/InfoEdit')
 }
 
 const logout = () => {
@@ -218,7 +218,7 @@ const onScroll = (e) => {
         <el-tab-pane label="关注(0)" name="4">
           <div class="blog-list" @scroll="onScroll">
             <div class="blog-box" v-for="b in blogs2" :key="b.id">
-              <div class="blog-img2" @click="router.push(`/blog/${b.id}`)">
+              <div class="blog-img2" @click="router.push(`/blogDetail/${b.id}`)">
                 <img :src="resolveImage(b.img)" alt="博客图片" />
               </div>
               <div class="blog-title">{{ b.title }}</div>
