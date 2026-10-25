@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.javaup.entity.Shop;
 import org.javaup.entity.Voucher;
 import org.javaup.entity.VoucherOrder;
+import org.javaup.mcp.rag.RuleRetriever;
+import org.javaup.mcp.rag.RuleRetriever.ScoredRule;
 import org.javaup.model.SeckillVoucherFullModel;
 import org.javaup.service.ISeckillVoucherService;
 import org.javaup.service.IShopService;
@@ -82,6 +84,7 @@ public class McpShopTools {
     private final ISeckillVoucherService seckillVoucherService;
     private final IVoucherOrderService voucherOrderService;
     private final Tracer tracer;
+    private final RuleRetriever ruleRetriever;
 
     /** 单个工具的超时时间（毫秒），可通过 mcp.tool.timeout-ms 覆盖 */
     @Value("${mcp.tool.timeout-ms:2000}")
@@ -115,6 +118,49 @@ public class McpShopTools {
             @ToolParam(description = "订单ID（雪花ID，例如 2112869162882732034）") Long orderId,
             ToolContext toolContext) {
         return guard("订单查询", () -> doQueryOrderStatus(orderId, toolContext));
+    }
+
+    /**
+     * 查询平台规则（RAG 的生成入口）。
+     *
+     * <p>先由 {@link RuleRetriever} 检索相关规则片段，再把<b>规则原文</b>返回给模型，
+     * 让模型基于规则回答，而不是靠自身知识编造。
+     *
+     * <p>检索不到时<b>明确返回「未找到」</b>并提示不要编造——这是抑制幻觉的关键：
+     * 如果这里返回空字符串或模糊结果，模型会自己"圆"一个答案。
+     */
+    @Tool(description = "查询平台规则与政策，例如优惠券使用规则、秒杀与限购规则、订单异常处理、"
+            + "退款规则、订阅提醒、缓存与数据一致性。当用户询问「为什么」「能不能」「怎么处理」"
+            + "这类政策性问题时使用本工具，而不要凭空回答。")
+    public String queryPlatformRule(
+            @ToolParam(description = "用户问题的核心关键词，例如「券能不能退」「抢不到订单」「一个人能抢几张」")
+            String question) {
+        return guard("规则查询", () -> doQueryPlatformRule(question));
+    }
+
+    private String doQueryPlatformRule(String question) {
+        try {
+            List<ScoredRule> results = ruleRetriever.search(question);
+            if (results.isEmpty()) {
+                log.info("[RAG] 未命中 question={}", question);
+                return "未查询到与该问题相关的平台规则。请如实告知用户「暂无相关规则」，不要自行推测或编造。";
+            }
+            List<Map<String, Object>> list = new ArrayList<>(results.size());
+            for (ScoredRule r : results) {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("title", r.chunk().title());
+                m.put("content", r.chunk().content());
+                m.put("source", r.chunk().source());
+                list.add(m);
+            }
+            log.info("[RAG] 命中 {} 条 question={} top={} score={}",
+                    list.size(), question, results.get(0).chunk().title(),
+                    String.format("%.2f", results.get(0).score()));
+            return JSONUtil.toJsonStr(list);
+        } catch (Exception e) {
+            log.warn("[MCP] queryPlatformRule 失败 question={}", question, e);
+            return "规则查询失败：" + e.getMessage();
+        }
     }
 
     // ==================================================================
