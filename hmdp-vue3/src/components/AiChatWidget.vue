@@ -246,7 +246,7 @@ function clearChat() {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #bbb;
+  background: var(--c-border-strong);
   animation: blink 1.4s infinite both;
 }
 .ai-bubble.typing span:nth-child(2) {

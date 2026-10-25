@@ -56,7 +56,7 @@
               disabled
               :max="5"
               :value="s.score / 10"
-              text-color="#043c75"
+              text-color="var(--c-primary)"
               show-score
             />
             <span>{{ s.comments }}条</span>
@@ -282,7 +282,7 @@ onMounted(() => {
 }
 .shop-box:active {
   transform: scale(0.988);
-  border-color: #ddd9d2;
+  border-color: var(--c-border)9d2;
 }
 
 .shop-img {

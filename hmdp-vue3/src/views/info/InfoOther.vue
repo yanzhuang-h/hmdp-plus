@@ -205,7 +205,7 @@ const toOtherInfo = (id) => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--c-fill);
 }
 
 .header {
@@ -215,13 +215,13 @@ const toOtherInfo = (id) => {
   align-items: center;
   padding: 0 15px;
   background: #fff;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid var(--c-fill);
   flex-shrink: 0;
 }
 
 .header-back-btn {
   font-size: 16px;
-  color: #333;
+  color: var(--c-text);
 }
 
 .header-title {
@@ -265,14 +265,14 @@ const toOtherInfo = (id) => {
 
 .basic-info span {
   font-size: 14px;
-  color: #999;
+  color: var(--c-text-muted);
 }
 
 .logout-btn {
   width: 80px;
   height: 30px;
   line-height: 30px;
-  background: #043c75;
+  background: var(--c-primary);
   color: #fff;
   border-radius: 15px;
   font-size: 14px;
@@ -283,7 +283,7 @@ const toOtherInfo = (id) => {
   background: #fff;
   margin-bottom: 10px;
   font-size: 14px;
-  color: #666;
+  color: var(--c-text-sub);
 }
 
 .content {
@@ -295,7 +295,7 @@ const toOtherInfo = (id) => {
 .blog-item {
   display: flex;
   padding: 15px;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid var(--c-fill);
 }
 
 .blog-img {
@@ -334,7 +334,7 @@ const toOtherInfo = (id) => {
   display: flex;
   align-items: center;
   font-size: 14px;
-  color: #999;
+  color: var(--c-text-muted);
 }
 
 .blog-liked img {
@@ -351,7 +351,7 @@ const toOtherInfo = (id) => {
   display: flex;
   align-items: center;
   padding: 15px;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid var(--c-fill);
 }
 
 .follow-info-icon {
@@ -381,7 +381,7 @@ const toOtherInfo = (id) => {
   width: 80px;
   height: 30px;
   line-height: 30px;
-  background: #043c75;
+  background: var(--c-primary);
   color: #fff;
   border-radius: 15px;
   font-size: 14px;

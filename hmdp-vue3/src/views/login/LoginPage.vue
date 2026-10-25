@@ -91,15 +91,15 @@ const rules = {
           >
           </el-input>
         </el-form-item>
-        <div style="text-align: center; color: #8c939d; margin: 5px 0">
+        <div style="text-align: center; color: var(--c-text-muted); margin: 5px 0">
           <a href="javascript:void(0)">忘记密码</a>
         </div>
         <el-button
           @click="login"
-          style="width: 100%; background-color: #043c75; color: #fff"
+          style="width: 100%; background-color: var(--c-primary); color: #fff"
           >登录</el-button
         >
-        <div style="text-align: right; color: #333333; margin: 5px 0">
+        <div style="text-align: right; color: var(--c-text); margin: 5px 0">
           <router-link to="/register">验证码登录</router-link>
         </div>
         <div class="login-radio">

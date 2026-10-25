@@ -120,19 +120,19 @@ const rules = {
           <el-input placeholder="请输入验证码" v-model="form.code"> </el-input>
         </el-form-item>
 
-        <div style="text-align: center; color: #8c939d; margin: 5px 0">
+        <div style="text-align: center; color: var(--c-text-muted); margin: 5px 0">
           未注册的手机号码验证后自动创建账户
         </div>
 
         <el-form-item>
           <el-button
             @click="login"
-            style="width: 100%; background-color: #043c75; color: #fff"
+            style="width: 100%; background-color: var(--c-primary); color: #fff"
             >登录</el-button
           >
         </el-form-item>
 
-        <div style="text-align: right; color: #333333; margin: 5px 0">
+        <div style="text-align: right; color: var(--c-text); margin: 5px 0">
           <router-link to="/login"> 密码登录 </router-link>
         </div>
 

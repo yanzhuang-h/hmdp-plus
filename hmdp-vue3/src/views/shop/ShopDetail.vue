@@ -358,7 +358,7 @@ onMounted(() => {
           disabled
           :max="5"
           :value="shop.score / 10"
-          text-color="#043c75"
+          text-color="var(--c-primary)"
           show-score
         />
         <span>{{ shop.comments }}条</span>
@@ -382,7 +382,7 @@ onMounted(() => {
         </div>
         <span>{{ shop.address }}</span>
         <div
-          style="width: 10px; flex-grow: 2; text-align: center; color: #e1e2e3"
+          style="width: 10px; flex-grow: 2; text-align: center; color: var(--c-border)"
         >
           |
         </div>
@@ -529,7 +529,7 @@ onMounted(() => {
             display: flex;
             justify-content: space-between;
             padding: 15px 0;
-            border-top: 1px solid #f1f1f1;
+            border-top: 1px solid var(--c-fill);
             margin-top: 10px;
           "
         >
@@ -550,7 +550,7 @@ onMounted(() => {
 <style scoped>
 .shop-detail-container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--c-fill);
 }
 
 .header {
@@ -599,7 +599,7 @@ onMounted(() => {
 }
 
 .shop-rate-info {
-  color: #666;
+  color: var(--c-text-sub);
   font-size: 14px;
   margin-bottom: 10px;
 }
@@ -628,13 +628,13 @@ onMounted(() => {
 .shop-address {
   display: flex;
   align-items: center;
-  color: #666;
+  color: var(--c-text-sub);
   font-size: 14px;
 }
 
 .shop-divider {
   height: 10px;
-  background-color: #f5f5f5;
+  background-color: var(--c-fill);
 }
 
 .shop-open-time {
@@ -650,7 +650,7 @@ onMounted(() => {
 
 .line-right {
   margin-left: auto;
-  color: #666;
+  color: var(--c-text-sub);
   display: flex;
   align-items: center;
   gap: 5px;
@@ -662,7 +662,7 @@ onMounted(() => {
 }
 
 .voucher-icon {
-  background-color: #043c75;
+  background-color: var(--c-primary);
   color: #fff;
   padding: 2px 5px;
   border-radius: 2px;
@@ -673,7 +673,7 @@ onMounted(() => {
   display: flex;
   margin-top: 10px;
   background-color: #fff;
-  border: 1px solid #eee;
+  border: 1px solid var(--c-fill);
   border-radius: 10px;
   position: relative;
   overflow: hidden;
@@ -695,14 +695,14 @@ onMounted(() => {
 .voucher-b {
   width: 10px;
   height: 10px;
-  background-color: #f5f5f5;
+  background-color: var(--c-fill);
   border-radius: 50%;
 }
 
 .voucher-left {
   flex: 1;
   padding: 10px;
-  border-right: 1px solid #f0f0f0;
+  border-right: 1px solid var(--c-fill);
 }
 
 .voucher-title {
@@ -712,13 +712,13 @@ onMounted(() => {
 }
 
 .voucher-subtitle {
-  color: #666;
+  color: var(--c-text-sub);
   font-size: 14px;
   margin-bottom: 5px;
 }
 
 .voucher-price {
-  color: #043c75;
+  color: var(--c-primary);
   font-size: 16px;
   display: flex;
   align-items: baseline;
@@ -732,11 +732,11 @@ onMounted(() => {
 }
 .voucher-price span {
   font-size: 14px;
-  color: #043c75;
+  color: var(--c-primary);
   padding: 0 6px;
   line-height: 18px;
   border-radius: 9px;
-  background-color: #f9f0d8;
+  background-color: var(--c-accent-soft);
 }
 
 .voucher-right {
@@ -767,7 +767,7 @@ onMounted(() => {
 .disable-btn {
   opacity: 0.7;
   cursor: not-allowed;
-  background: #d9d9d9;
+  background: var(--c-border-strong);
   box-shadow: none;
   color: #fff;
 }
@@ -781,7 +781,7 @@ onMounted(() => {
 
 .seckill-stock {
   font-size: 12px;
-  color: #8a8a8a;
+  color: var(--c-text-muted);
   margin-top: 4px;
 }
 .seckill-stock span {
@@ -789,19 +789,19 @@ onMounted(() => {
   padding: 0 6px;
   line-height: 18px;
   border-radius: 9px;
-  background-color: #f9f0d8;
-  color: #043c75;
+  background-color: var(--c-accent-soft);
+  color: var(--c-primary);
   margin: 0 2px;
 }
 
 .seckill-time {
   font-size: 12px;
-  color: #8a8a8a;
+  color: var(--c-text-muted);
 }
 
 .seckill-status {
   font-size: 14px;
-  color: #666;
+  color: var(--c-text-sub);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -812,8 +812,8 @@ onMounted(() => {
   padding: 2px 8px;
   line-height: 20px;
   border-radius: 10px;
-  background-color: #f9f0d8;
-  color: #043c75;
+  background-color: var(--c-accent-soft);
+  color: var(--c-primary);
   font-weight: 600;
 }
 .cancel-link {
@@ -821,15 +821,15 @@ onMounted(() => {
   padding: 4px 12px;
   line-height: 20px;
   border-radius: 12px;
-  border: 1px solid #409eff;
-  background-color: #409eff;
+  border: 1px solid var(--c-primary);
+  background-color: var(--c-primary);
   color: #fff;
   font-size: 14px;
   cursor: pointer;
 }
 .cancel-link:hover {
-  background-color: #337ecc;
-  border-color: #337ecc;
+  background-color: var(--c-primary-hover);
+  border-color: var(--c-primary-hover);
 }
 
 /* 订阅到券提醒样式 */
@@ -842,15 +842,15 @@ onMounted(() => {
   align-items: stretch;
   gap: 8px;
   font-size: 14px;
-  color: #666;
+  color: var(--c-text-sub);
 }
 .subscribed-tag {
   display: inline-block;
   padding: 2px 8px;
   line-height: 20px;
   border-radius: 10px;
-  background-color: #e6f4ff;
-  color: #1677ff;
+  background-color: var(--c-primary-soft);
+  color: var(--c-primary);
   font-weight: 600;
 }
 .subscribe-link {
@@ -858,30 +858,31 @@ onMounted(() => {
   padding: 4px 12px;
   line-height: 20px;
   border-radius: 12px;
-  border: 1px solid #ebd4a2;
-  background-color: #ebd4a2;
+  border: 1px solid var(--c-primary);
+  background-color: var(--c-primary);
   color: #fff;
   cursor: pointer;
+  transition: background-color 0.18s ease;
 }
 .subscribe-link:hover {
-  background-color: #fa8c16;
-  border-color: #fa8c16;
+  background-color: var(--c-primary-hover);
+  border-color: var(--c-primary-hover);
 }
 .cancel-subscribe {
   display: inline-block;
   padding: 4px 12px;
   line-height: 20px;
   border-radius: 12px;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--c-border-strong);
   background-color: #fff;
-  color: #606266;
+  color: var(--c-text-sub);
   cursor: pointer;
 }
 .cancel-subscribe:hover {
-  background-color: #f5f5f5;
+  background-color: var(--c-fill);
 }
 .subscribe-tip {
-  color: #8a8a8a;
+  color: var(--c-text-muted);
   font-size: 12px;
 }
 
@@ -920,7 +921,7 @@ onMounted(() => {
 
 .tag {
   padding: 5px 10px;
-  background-color: #f5f5f5;
+  background-color: var(--c-fill);
   border-radius: 15px;
   font-size: 14px;
 }
@@ -942,7 +943,7 @@ onMounted(() => {
 }
 
 .comment-user span {
-  color: #666;
+  color: var(--c-text-sub);
   font-size: 12px;
   margin-left: 5px;
 }
@@ -963,7 +964,7 @@ onMounted(() => {
 .copyright {
   text-align: center;
   padding: 15px;
-  color: #999;
+  color: var(--c-text-muted);
   font-size: 12px;
 }
 
@@ -988,14 +989,14 @@ onMounted(() => {
 :global(.seckill-overlay .el-loading-spinner .circular) {
   width: 42px;
   height: 42px;
-  stroke: #043c75; /* 与主题色协调 */
+  stroke: var(--c-primary); /* 与主题色协调 */
 }
 
 :global(.seckill-overlay .el-loading-text) {
   margin-top: 2px;
   font-size: 20px; /* 调大文字 */
   font-weight: 700;
-  color: #333;
+  color: var(--c-text);
   letter-spacing: 0.3px;
 }
 </style>

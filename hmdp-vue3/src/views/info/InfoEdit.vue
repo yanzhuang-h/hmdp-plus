@@ -156,7 +156,7 @@ const goBack = () => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--c-fill);
 }
 
 .header {
@@ -166,13 +166,13 @@ const goBack = () => {
   align-items: center;
   padding: 0 15px;
   background: #fff;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid var(--c-fill);
   flex-shrink: 0;
 }
 
 .header-back-btn {
   font-size: 16px;
-  color: #333;
+  color: var(--c-text);
 }
 
 .header-title {
@@ -202,13 +202,13 @@ const goBack = () => {
 
 .info-label {
   font-size: 16px;
-  color: #333;
+  color: var(--c-text);
 }
 
 .info-btn {
   display: flex;
   align-items: center;
-  color: #999;
+  color: var(--c-text-muted);
 }
 
 .info-btn img {
@@ -218,12 +218,12 @@ const goBack = () => {
 
 .divider {
   height: 1px;
-  background: #f1f1f1;
+  background: var(--c-fill);
   margin: 0 15px;
 }
 
 a {
-  color: #043c75;
+  color: var(--c-primary);
   text-decoration: none;
 }
 </style>
