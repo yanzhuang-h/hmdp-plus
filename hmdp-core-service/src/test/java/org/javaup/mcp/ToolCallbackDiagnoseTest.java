@@ -27,7 +27,9 @@ class ToolCallbackDiagnoseTest {
                 mock(org.javaup.service.IShopService.class),
                 mock(org.javaup.service.IVoucherService.class),
                 mock(org.javaup.service.ISeckillVoucherService.class),
-                mock(org.javaup.service.IVoucherOrderService.class));
+                mock(org.javaup.service.IVoucherOrderService.class),
+                // 工具层已接入链路埋点，单测里用 NOOP Tracer，不产生真实 span
+                io.micrometer.tracing.Tracer.NOOP);
     }
 
     @Test

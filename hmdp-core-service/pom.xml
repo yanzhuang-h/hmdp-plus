@@ -146,6 +146,12 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+        <!-- 链路埋点：Brave 作为 tracing 实现，traceId/spanId 自动注入日志 MDC。
+             不接 Zipkin 等后端，只做本地埋点与日志串联，避免引入外部依赖。 -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
         <!-- Spring AI MCP Server：将商户/优惠券/订单查询能力以标准 MCP 协议暴露给 AI 客户端 -->
         <dependency>
             <groupId>org.springframework.ai</groupId>

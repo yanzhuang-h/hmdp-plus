@@ -13,7 +13,10 @@
         <Property name="PROJECT_NAME">core-service</Property>
         <Property name="ENV">local</Property>
         <Property name="FILE_NAME">log</Property>
-        <Property name="PATTERN">[core-service] %d{yyyy-MM-dd HH:mm:ss} %5p %c{1}:%L - %m%n</Property>
+        <!-- 链路埋点：输出 traceId/spanId，便于把一次请求的所有日志串起来。
+             Log4j2 用 %X{traceId}，与 Logback 的 %X{traceId} 一致；
+             注意本项目用 Log4j2，application.yml 里的 logging.pattern.level 不生效。 -->
+        <Property name="PATTERN">[core-service] %d{yyyy-MM-dd HH:mm:ss} %5p [%X{traceId},%X{spanId}] %c{1}:%L - %m%n</Property>
         <Property name="ENCODING">UTF-8</Property>
         <Property name="CUSTOM_MESSAGE_KEY">org.javaup</Property>
     </Properties>

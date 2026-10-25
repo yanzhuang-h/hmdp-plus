@@ -89,6 +89,8 @@ logging:
     AUDIT: INFO
   pattern:
     dateformat: mm:ss.SSS
+    # 日志中带上 traceId / spanId，便于把一次请求的所有日志串起来
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 bloom-filter:
   filters:
     shop:
@@ -108,4 +110,9 @@ management:
     metrics:
       export:
         enabled: true
+  # 链路埋点：全量采样（本地调试友好），生产环境应调低
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
       

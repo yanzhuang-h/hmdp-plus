@@ -6,6 +6,9 @@ import org.javaup.dto.Result;
 import org.javaup.dto.UserDTO;
 import org.javaup.mcp.McpShopTools;
 import org.javaup.utils.UserHolder;
+import io.micrometer.tracing.Span;
+import org.apache.logging.log4j.ThreadContext;
+import io.micrometer.tracing.Tracer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ToolContext;
@@ -31,6 +34,7 @@ public class AiChatController {
 
     private final ChatClient shopChatClient;
     private final McpShopTools mcpShopTools;
+    private final Tracer tracer;
 
     /**
      * 多轮对话。
@@ -49,17 +53,32 @@ public class AiChatController {
         if (currentUser == null) {
             return Result.fail("未登录");
         }
-        try {
+        // 链路埋点：为一次对话建立 span，子 span（工具调用）会自动挂到它下面
+        Span span = tracer.nextSpan()
+                .name("ai.chat")
+                .tag("session.id", sessionId)
+                .tag("message.length", String.valueOf(message.length()))
+                .start();
+        // 手动写 Log4j2 ThreadContext，让本次对话的所有日志带上同一个 traceId
+        ThreadContext.put("traceId", span.context().traceId());
+        ThreadContext.put("spanId", span.context().spanId());
+        try (Tracer.SpanInScope ignored = tracer.withSpan(span)) {
             String answer = shopChatClient.prompt()
                     .user(message)
                     .toolContext(Map.of("userId", currentUser.getId()))
                     .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, sessionId))
                     .call()
                     .content();
+            span.tag("answer.length", String.valueOf(answer == null ? 0 : answer.length()));
             return Result.ok(answer);
         } catch (Exception e) {
+            span.error(e);
             log.error("[AI] 对话失败 sessionId={} message={}", sessionId, message, e);
             return Result.fail("智能客服暂时不可用：" + e.getMessage());
+        } finally {
+            span.end();
+            ThreadContext.remove("traceId");
+            ThreadContext.remove("spanId");
         }
     }
 
