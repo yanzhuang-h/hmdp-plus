@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.javaup.entity.Shop;
 import org.javaup.entity.Voucher;
 import org.javaup.entity.VoucherOrder;
+import org.javaup.mcp.orchestration.OrderDiagnosisOrchestrator;
 import org.javaup.mcp.rag.RuleRetriever;
 import org.javaup.mcp.rag.RuleRetriever.ScoredRule;
 import org.javaup.model.SeckillVoucherFullModel;
@@ -85,6 +86,7 @@ public class McpShopTools {
     private final IVoucherOrderService voucherOrderService;
     private final Tracer tracer;
     private final RuleRetriever ruleRetriever;
+    private final OrderDiagnosisOrchestrator diagnosisOrchestrator;
 
     /** 单个工具的超时时间（毫秒），可通过 mcp.tool.timeout-ms 覆盖 */
     @Value("${mcp.tool.timeout-ms:2000}")
@@ -163,6 +165,68 @@ public class McpShopTools {
         }
     }
 
+    /**
+     * 订单异常深度诊断（跨工具编排入口）。
+     *
+     * <p>一次调用会由 {@link OrderDiagnosisOrchestrator} 编排 5 个数据源：
+     * 订单、对账日志、券、秒杀活动、平台规则。相比让模型自己连着调 4 个工具，
+     * 这里把稳定的依赖关系（订单→券→商铺）固化下来，并对可并行的部分并行执行。
+     *
+     * <p>返回体里带 <b>steps 编排轨迹</b>，模型能据此知道哪些数据取到了、哪些没取到，
+     * 避免基于缺失数据给出确定结论。
+     */
+    @Tool(description = "深度诊断订单异常。一次性排查订单状态、对账一致性、券信息与秒杀活动，"
+            + "并在订单查不到时判断是否属于「库存已扣减但订单未生成」的异步中间态。"
+            + "当用户反馈「抢到了却没有订单」「订单状态不对」「券为什么用不了」这类需要多维度排查的问题时使用。")
+    public String diagnoseOrderIssue(
+            @ToolParam(description = "订单ID") Long orderId,
+            ToolContext toolContext) {
+        return guard("订单诊断", () -> doDiagnoseOrderIssue(orderId, toolContext));
+    }
+
+    private String doDiagnoseOrderIssue(Long orderId, ToolContext toolContext) {
+        // 编排器内部也做越权校验，但必须先确保拿到了身份，否则越权防护会退化成"不校验"
+        Object uid = toolContext == null ? null : toolContext.getContext().get("userId");
+        if (!(uid instanceof Long userId)) {
+            log.warn("[ORCH] diagnoseOrderIssue 拒绝：无用户身份上下文 orderId={}", orderId);
+            return "无法确认当前用户身份。订单诊断仅支持已登录的应用内对话。";
+        }
+        if (orderId == null) {
+            return "请提供要诊断的订单ID";
+        }
+        OrderDiagnosisOrchestrator.DiagnosisResult r = diagnosisOrchestrator.diagnose(userId, orderId);
+
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("conclusion", r.conclusion());
+        out.put("severity", r.severity());
+        out.put("detail", r.detail());
+        // 编排轨迹：让模型知道每一步是否成功
+        List<Map<String, Object>> steps = new ArrayList<>(r.traces().size());
+        for (OrderDiagnosisOrchestrator.StepTrace t : r.traces()) {
+            Map<String, Object> s = new LinkedHashMap<>();
+            s.put("step", t.step());
+            s.put("ok", t.ok());
+            s.put("costMs", t.costMs());
+            if (!t.ok()) {
+                s.put("error", t.error());
+            }
+            steps.add(s);
+        }
+        out.put("steps", steps);
+        out.put("totalCostMs", r.totalCostMs());
+        out.put("data", r.data());
+        if (!r.rules().isEmpty()) {
+            List<Map<String, Object>> rules = new ArrayList<>(r.rules().size());
+            for (RuleRetriever.ScoredRule sr : r.rules()) {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("title", sr.chunk().title());
+                m.put("content", sr.chunk().content());
+                rules.add(m);
+            }
+            out.put("rules", rules);
+        }
+        return JSONUtil.toJsonStr(out);
+    }
     // ==================================================================
     // 工具真实实现
     // ==================================================================

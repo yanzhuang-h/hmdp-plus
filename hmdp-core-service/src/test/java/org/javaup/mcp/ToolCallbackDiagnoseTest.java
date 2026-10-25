@@ -37,26 +37,28 @@ class ToolCallbackDiagnoseTest {
                 mock(org.javaup.service.IVoucherOrderService.class),
                 // 工具层已接入链路埋点，单测里用 NOOP Tracer，不产生真实 span
                 io.micrometer.tracing.Tracer.NOOP,
-                retriever);
+                retriever,
+                mock(org.javaup.mcp.orchestration.OrderDiagnosisOrchestrator.class));
     }
 
     @Test
-    @DisplayName("@Tool 应解析出 4 个工具，且参数名/描述正确")
-    void shouldExposeFourToolsWithCorrectSchema() {
+    @DisplayName("@Tool 应解析出 5 个工具，且参数名/描述正确")
+    void shouldExposeFiveToolsWithCorrectSchema() {
         McpShopTools tools = buildTools();
         ToolCallback[] callbacks = MethodToolCallbackProvider.builder()
                 .toolObjects(tools)
                 .build()
                 .getToolCallbacks();
 
-        assertEquals(4, callbacks.length, "应解析出 4 个 MCP 工具");
+        assertEquals(5, callbacks.length, "应解析出 5 个 MCP 工具");
 
         var names = java.util.Arrays.stream(callbacks)
                 .map(cb -> cb.getToolDefinition().name())
                 .sorted()
                 .toList();
         assertEquals(
-                java.util.List.of("queryOrderStatus", "queryPlatformRule", "queryShopById", "queryShopVouchers"),
+                java.util.List.of("diagnoseOrderIssue", "queryOrderStatus", "queryPlatformRule",
+                        "queryShopById", "queryShopVouchers"),
                 names);
 
         for (ToolCallback cb : callbacks) {
@@ -70,6 +72,7 @@ class ToolCallbackDiagnoseTest {
             String expectedParam = switch (name) {
                 case "queryOrderStatus" -> "orderId";
                 case "queryPlatformRule" -> "question";
+                case "diagnoseOrderIssue" -> "orderId";
                 default -> "shopId";
             };
             assertTrue(schema.contains("\"" + expectedParam + "\""),
