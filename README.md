@@ -1,180 +1,201 @@
-# hmdp-plus
+# 寻味 Taste · 本地生活服务平台
 
-> 高并发本地生活后端 · 秒杀一致性链路 · 多级缓存 · 消息可靠性 · MCP 工具化 AI
+> 高并发秒杀交易 · 多级缓存 · 异步下单与对账补偿 · MCP 智能客服
 
----
+寻味 Taste 面向商铺浏览、优惠券领取与秒杀下单等本地生活场景，使用 Java 17、Spring Boot 3 和 Vue 3 构建。项目围绕秒杀交易链路，结合 Redis + Lua 库存预扣、Kafka 异步下单、ShardingSphere 分库分表和对账补偿处理高并发请求；通过多级缓存、布隆过滤器与入口限流承接热点访问。
 
-## 这是什么
+平台同时提供 AI 客服：将业务查询与订单诊断封装为工具，通过 Spring AI 支持应用内多轮对话，并通过 MCP Server 向外部 AI 客户端提供工具调用能力，结合平台规则检索回答业务问题。
 
-一个**本地生活服务**方向的后端项目，围绕「优惠券秒杀」与「热点查询」两个高并发场景，实现从**入口限流 → Redis 原子扣减 → Kafka 异步下单 → 分库分表落库 → 定时对账补偿**的完整链路，并配套多级缓存、布隆过滤器、分布式锁、延迟队列等基础组件。
+## 业务功能
 
-在此之上增加了 **MCP（Model Context Protocol）工具化能力**：把商户、优惠券、订单查询封装成受控工具，供 AI 客户端调用，实现带上下文的智能客服。
-
-**本仓库用途**：个人学习与求职展示。用来证明后端工程能力与中间件理解，而非生产交付。
-
----
-
-## 来源与许可
-
-| 项 | 说明 |
+| 模块 | 功能 |
 |---|---|
-| 原项目 | [hmdp-plus](https://gitee.com/java-up-up/hmdp-plus)（作者：阿星不是程序员） |
-| 许可证 | **Apache License 2.0**（见 [LICENSE](LICENSE)） |
-| 本仓库性质 | 基于原项目的**二次开发**，保留原始许可与版权声明 |
-| 修改范围 | 见下方「本仓库的改动」 |
+| 用户与会员 | 验证码登录、用户信息、会员等级、签到与签到统计 |
+| 商铺与内容 | 商铺详情、分类查询、名称搜索、探店笔记、点赞与关注 |
+| 优惠券 | 普通券与秒杀券查询、活动时间与会员资格校验、库存管理 |
+| 秒杀订单 | 准入令牌、库存预扣、异步创建订单、结果查询与取消订单 |
+| 订阅通知 | 秒杀订阅、到券提醒、库存回流后的候补处理 |
+| 智能客服 | 商铺与券查询、本人订单查询、平台规则问答、订单异常诊断 |
 
-> 依据 Apache 2.0 第 4 条，本仓库保留 `LICENSE` 与原始版权声明，并在下节明确标注所做的修改。未使用原作者商标或名义进行推广。
+## 核心设计
 
----
+### 秒杀交易与一致性
 
-## 本仓库的改动
+```text
+领取准入令牌
+    ↓
+入口限流 → 一次性令牌校验 → 活动与会员资格校验
+    ↓
+Redis + Lua：检查库存与已购记录 → 原子预扣 → 写入扣减流水
+    ↓
+Kafka 异步下单 → 数据库条件扣减 → 保存订单、路由与对账日志
+    ↓
+订单结果查询
 
-### 后端修复与调优
+异常路径：发送失败 / 消费失败 / 消息过期 → 回滚处理
+对账路径：检查 Redis 流水与数据库记录 → 补齐流水 / 清理异常状态
+```
 
-- **修复 JSON 序列化的 null 语义**：`JsonCustomSerializer` 原实现把 `Number` 类型的 `null` 序列化成 `""`、把 `List` 类型的 `null` 序列化成 `[]`，会让第三方 API 请求体非法；改为输出 `null`。
-- **移除硬编码的数字转字符串**：`JacksonCustom` 中强制开启的 `WRITE_NUMBERS_AS_STRINGS` 会导致所有数值序列化为字符串，与上游 API 冲突。
-- **修正初始化顺序**：`DelCacheDataInit` 增加 `@DependsOn`，确保「券时间续期」完成后再清缓存，避免按旧时间窗重建缓存。
-- **修复上传路径与 SQL 脚本**：上传目录改为前端静态资源目录；修正 `sql/hmdp_0.sql`、`hmdp_1.sql` 中 MySQL 5.7 不支持的排序规则与孤儿字符集还原语句。
+- **原子预扣**：Lua 在一次脚本执行中完成活动校验、库存检查、重复购买检查、扣减及流水记录，使用 Redis 时间判断活动窗口。
+- **异步落库**：Kafka 承接下单消息，消费端以 `stock > 0` 为条件扣减数据库库存，保存订单及相关记录。入口返回订单号后，由查询接口获取落库结果。
+- **多层防重**：一次性准入令牌、Redis 已购集合、消息 UUID 防重与正常订单检查分别处理请求重放、重复购买和消息重复执行。
+- **失败处理**：发送或消费失败时调用回滚组件，按场景清理购买资格、删除 Redis 库存缓存并记录恢复流水，后续按需重新加载库存。
+- **对账与告警**：对账服务检查扣减流水和数据库日志，处理遗漏状态；回滚组件提供退避重试、失败日志和告警。
+- **分片与路由**：ShardingSphere 配置两库两表，订单按用户与券维度分片，配套订单路由表和雪花 ID。
 
-### AI 能力（新增）
+### 热点查询与多级缓存
 
-- **MCP Server**：以标准 MCP 协议（JSON-RPC over SSE）暴露 3 个只读工具
-  - `queryShopById` — 查询商铺详情
-  - `queryShopVouchers` — 查询商铺优惠券与实时库存
-  - `queryOrderStatus` — 查询订单状态
-  - 设计约束：只读、不依赖 `UserHolder`、异常统一转友好文本
-- **智能客服**：Spring AI `ChatClient` + `ChatMemory`（按会话隔离），支持多轮上下文
-- **验证脚本**：`perf/mcp-verify.mjs` 自实现最小 MCP 客户端，验证握手、工具清单与工具实际调用
+- **秒杀券详情**：Caffeine L1 → Redis L2 → MySQL，Redis 命中后回填本地缓存，TTL 按活动结束时间计算。
+- **独立库存 Key**：券详情与预扣库存分开存储，实时库存通过 Redis + Lua 操作。
+- **防穿透与重建**：布隆过滤器、空值缓存和互斥重建减少无效回源及热点缓存失效时的数据库压力。
+- **广播失效**：业务更新后清理本机缓存并发布 Kafka 失效事件，各实例通过独立消费者组清理自己的本地缓存，推动多实例缓存收敛。
+- **入口流控**：按令牌签发、秒杀下单等场景组合准入凭证、令牌桶、滑动窗口和分级惩罚策略。
 
-### 压测与文档（新增）
+### 消息与工程组件
 
-- 参数化 JMeter 压测计划 + jtl 分析脚本 + 压测报告
-- 开发路线图、MCP 架构说明、面试知识库、自验手册
+- Kafka 消息封装、发送结果回调、手动确认，以及缓存失效链路的重试与死信处理。
+- Redisson 分布式锁及 `@ServiceLock` 注解，支持读锁、写锁、公平锁和可重入锁。
+- 注解式防重复执行、Redis Key 管理和 HashTag 同槽设计。
+- 延迟提醒、订阅处理、库存回流与店铺买家统计。
+- Micrometer Tracing + Brave 链路埋点、关联日志及 Prometheus 指标。
 
----
+## AI 客服与 MCP
+
+### 两种工具入口
+
+```text
+平台用户 → 应用内客服 → Spring AI ChatClient → Tool Calling → 业务工具
+外部 AI 客户端 → MCP Server（SSE + JSON-RPC）──────────────→ 同一批工具
+```
+
+应用内客服通过 `ChatClient` 注册工具，由模型选择调用；MCP Server 提供标准工具发现与调用接口。两种入口复用业务实现。
+
+| 工具 | 用途 |
+|---|---|
+| `queryShopById` | 查询商铺名称、地址、评分、人均消费等信息 |
+| `queryShopVouchers` | 查询商铺优惠券、库存及活动信息 |
+| `queryOrderStatus` | 查询当前登录用户本人的订单状态 |
+| `queryPlatformRule` | 检索优惠券、秒杀、订单等平台规则 |
+| `diagnoseOrderIssue` | 聚合订单、对账、券与商铺信息，诊断订单异常 |
+
+### 上下文、规则与诊断
+
+- **多轮对话**：使用 `ChatMemory` 和消息窗口维护会话上下文，当前为单实例内存实现。
+- **订单权限**：用户身份通过服务端 `ToolContext` 注入，工具检查订单归属；越权与不存在统一返回“未找到”。缺少可信用户身份的外部 MCP 调用不能读取私有订单。
+- **规则检索 RAG**：加载 5 份 Markdown 中的 27 条规则，结合中文 bigram、同义词扩展、词频与逆文档频率打分、标题加权和阈值过滤，返回相关规则供模型回答。
+- **诊断编排**：复合工具在代码中组织查询依赖，并行获取订单与对账信息，继续查询券及商铺，结合规则生成诊断材料，记录步骤耗时与失败信息并支持部分降级。
 
 ## 技术栈
 
-| 类别 | 选型 |
+| 类别 | 技术 |
 |---|---|
-| 语言 / 框架 | Java 17 · Spring Boot 3.5 |
-| 持久层 | MyBatis-Plus · MySQL 5.7 |
-| 分库分表 | ShardingSphere（2 库 × 2 表） |
-| 缓存 | Redis 6 · Caffeine（L1）· Redisson |
-| 消息 | Kafka（生产确认 / 重试 / DLQ / 手动 ack） |
-| 分布式协调 | Redisson（读/写/公平/重入锁、延迟队列） |
-| AI | Spring AI 1.0.9 · MCP Server · OpenAI 兼容协议接入 DeepSeek |
-| 可观测 | Micrometer · Prometheus |
-| 前端（配套） | Vue 3 · Vite |
+| 后端 | Java 17、Spring Boot 3.5.4、MyBatis-Plus |
+| 数据存储 | MySQL、ShardingSphere 5.3.2 |
+| 缓存与协调 | Redis、Caffeine、Redisson |
+| 消息 | Kafka |
+| 大模型与工具 | Spring AI 1.0.9、DeepSeek（OpenAI 兼容接口）、MCP（SSE） |
+| 可观测 | Micrometer Tracing、Brave、Prometheus |
+| 前端 | Vue 3、Vite、Element Plus、Pinia |
+| 验证与压测 | JUnit、JMeter、Node.js MCP 验证脚本 |
 
----
+## 项目结构
 
-## 核心能力
-
-### 后端
-
-| 能力 | 实现要点 |
-|---|---|
-| 秒杀链路 | Redis + Lua 原子扣减（库存 + 已购集合 + 流水一次完成）→ Kafka 异步下单 → 分库分表落库 |
-| 数据一致性 | 对账日志表 + 定时对账任务 + 回滚失败日志 + 告警；覆盖「扣减成功但订单失败」「消费延迟」等窗口期 |
-| 缓存治理 | L1 Caffeine + L2 Redis；布隆过滤器 + 空值缓存防穿透；逻辑过期 + 互斥锁 + 异步重建防击穿；Kafka 广播失效保证多实例 L1 一致 |
-| 消息可靠性 | 发布确认、指数退避重试、死信队列、手动提交 offset、消费幂等 |
-| 入口流控 | 令牌签发 + 令牌桶 + 滑动窗口 + 分级惩罚策略 |
-| 分布式锁 | Redisson 读/写/公平/重入锁 + `@ServiceLock` 注解 |
-| 延迟队列 | 到券提醒、订单超时关闭 |
-| 全局 ID | 雪花算法（含时钟回拨检测），适配分库分表 |
-
-### AI 增强
-
-| 能力 | 状态 |
-|---|---|
-| MCP Server（3 工具） | ✅ 已实测：工具清单、工具调用、错误路径 |
-| 单轮对话（工具调用） | ✅ 已实测：真实数据回填，非模型编造 |
-| 多轮对话（上下文记忆） | ✅ 已实测：可正确理解代词指代 |
-
-> AI 部分的边界是「**复用后端已有数据与接口**」，不引入向量库、工作流状态机、评测框架等独立基础设施。详见 [开发路线图](docs/hmdp-plus-开发路线图.md)。
-
----
-
-## 压测数据
-
-环境：单机（24 核），应用与压测工具同机，数据偏保守。
-
-| 场景 | 并发 | QPS | P99 | 错误率 |
-|---|---|---|---|---|
-| 无缓存接口 | 100 | **4,199** | 46ms | 0% |
-| 无缓存接口 | 400 | 3,592 | 191ms | 0% |
-| **L1+L2 缓存接口** | 100 | **6,825** | 48ms | 0% |
-
-- 吞吐拐点在 **100 并发**，继续加压 QPS 反而下降
-- 多级缓存带来 **+62.6% QPS**，平均耗时下降 39%
-
-完整方法与数据见 [压测报告](perf/压测报告.md)。
-
----
-
-## 快速开始
-
-### 依赖
-
-MySQL 5.7、Redis 6、Kafka（本地或用 Docker）。数据库脚本见 `sql/`。
-
-### 配置
-
-```bash
-# 1. 数据库连接（按需修改）
-hmdp-core-service/src/main/resources/shardingsphere.yaml  →  jdbcUrl / username / password
-
-# 2. AI 能力所需的模型密钥（不配置则仅 AI 功能不可用，其余功能正常）
-#    通过环境变量注入，切勿写入配置文件
-export DEEPSEEK_API_KEY=sk-xxxxxxxx      # Linux / macOS
-setx DEEPSEEK_API_KEY "sk-xxxxxxxx"      # Windows（设置后需重启 IDE）
-
-# 或使用 IDEA：Run → Edit Configurations → VM options
--DDEEPSEEK_API_KEY=sk-xxxxxxxx
+```text
+hmdp-plus/
+├── hmdp-core-service/             # 业务接口、订单、缓存、MCP 与客服
+├── hmdp-common/                   # 公共工具与基础配置
+├── hmdp-parameter/                # 参数与数据传输对象
+├── hmdp-sharding/                 # 分库分表支持
+├── hmdp-redis-tool-framework/     # Redis 封装、Key 管理与限流
+├── hmdp-redisson-framework/       # 分布式锁、防重、布隆过滤器与延迟队列
+├── hmdp-mq-framework/             # 消息生产与消费封装
+├── hmdp-id-generator-framework/   # 分布式 ID
+├── hmdp-vue3/                     # Vue 3 前端
+├── sql/                          # 数据库初始化脚本
+├── perf/                         # 压测计划、结果与 MCP 验证脚本
+└── docs/                         # 架构设计与功能说明
 ```
 
-### 启动
+## 运行方式
+
+### 1. 准备依赖与配置
+
+准备 JDK 17、Maven、MySQL、Redis 和 Kafka；运行前端及验证脚本还需 Node.js，前端使用 pnpm。
+
+1. 执行 [创建数据库脚本](sql/1_create_database.sql)，再分别向 `hmdp_0`、`hmdp_1` 导入对应的 SQL 文件。
+2. 在 `hmdp-core-service/src/main/resources/shardingsphere.yaml` 中配置数据库连接。
+3. 在 `hmdp-core-service/src/main/resources/application.yml` 中检查 Redis、Kafka 和应用配置。
+4. 通过环境变量 `DEEPSEEK_API_KEY` 配置模型密钥。
+
+PowerShell 示例（在启动后端的同一终端执行）：
+
+```powershell
+$env:DEEPSEEK_API_KEY = "你的模型密钥"
+```
+
+Linux / macOS：
+
+```bash
+export DEEPSEEK_API_KEY="你的模型密钥"
+```
+
+### 2. 启动后端
+
+在项目根目录执行：
 
 ```bash
 mvn clean install -DskipTests
 mvn -pl hmdp-core-service spring-boot:run
 ```
 
-服务默认端口 `8085`。
+后端默认地址：`http://localhost:8085`。也可在 IDE 中运行 `org.javaup.HmDianPingApplication`。
 
-### 验证 MCP
+### 3. 启动前端
+
+```bash
+cd hmdp-vue3
+pnpm install
+pnpm dev
+```
+
+前端默认地址：`http://localhost:5173`，`/api` 请求代理至后端。图片请求 `/imgs` 当前代理至 `http://localhost:8080`，需按本地静态资源服务调整。
+
+### 4. 验证 MCP 与客服
+
+在项目根目录执行：
 
 ```bash
 node perf/mcp-verify.mjs http://localhost:8085
 ```
 
-期望输出：握手成功、工具清单返回 3 个工具、工具调用返回真实业务数据。
+脚本验证 SSE 连接、协议握手、工具清单和商铺、优惠券工具调用。当前注册 5 个工具；业务返回内容取决于本地初始化数据。
 
----
+应用内客服入口为 `POST /ai/chat`，使用登录后的 `authorization` 请求头，提交 `message` 与 `sessionId` 参数。同一会话使用相同的 `sessionId`。例如可询问“1 号商铺有什么优惠券”或“为什么抢到了却没有订单”。
 
-## 文档
+## 压测记录
+
+历史 JMeter 测试中，应用与压测工具部署在同一台机器。以下数据对应读接口 `/shop-type/list`：
+
+| 并发数 | QPS | 平均耗时 | P99 |
+|---|---:|---:|---:|
+| 100 | 4,199 | 19.9 ms | 46 ms |
+| 200 | 3,806 | 44.1 ms | 114 ms |
+| 400 | 3,592 | 91.0 ms | 191 ms |
+
+该测试条件下，100 并发组吞吐最高，继续加压后吞吐下降、延迟上升。结果反映读接口表现，秒杀链路另有一次性令牌和限流保护验证。完整环境、脚本与历史结果见 [压测报告](perf/压测报告.md) 和 [数据汇总](perf/summary.md)。
+
+## 相关文档
 
 | 文档 | 内容 |
 |---|---|
-| [开发路线图](docs/hmdp-plus-开发路线图.md) | 后端深化计划、AI 能力边界、验收标准 |
-| [压测报告](perf/压测报告.md) | 环境、方案、6 组数据、局限性 |
-| [MCP 与智能客服](docs/MCP与智能客服.md) | 架构、端点、工具 schema、5 类序列化问题排查过程 |
-| [AI 功能自验手册](docs/AI功能自验手册.md) | 配置密钥后的 4 步验证流程 |
-| [面试知识库](docs/项目盘点与面试知识库.md) | 能力盘点、简历措辞分档、面试话术 |
+| [MCP 与智能客服](docs/MCP与智能客服.md) | 接入过程、工具复用、权限与序列化排障记录 |
+| [RAG 设计](docs/RAG设计.md) | 平台规则组织与检索设计 |
+| [跨工具编排设计](docs/跨工具编排设计.md) | 订单诊断依赖与执行流程 |
+| [AI 功能自验手册](docs/AI功能自验手册.md) | 本地功能验证步骤 |
+| [压测报告](perf/压测报告.md) | 测试环境、场景与结果 |
 
----
+部分文档记录了开发过程中的历史版本，当前工具与功能以源码及本 README 为准。
 
-## 已知限制
+## 许可证
 
-- 压测为**单机同机**，应用与压测工具争夺 CPU，数据偏保守，不代表生产极限
-- **Redis GEO 附近商户**功能已实现但当前被禁用（`x/y` 入参被置空），未参与验收
-- **评论模块**仅有 Controller 骨架，未实现
-- AI 部分：`ChatMemory` 为单实例内存实现，多实例部署需替换为 Redis 版
-- 未做：全链路追踪、多活容灾、生产级安全加固
-
----
-
-## 致谢
-
-原项目 [hmdp-plus](https://gitee.com/java-up-up/hmdp-plus) 提供了完整的业务骨架与中间件实践基础，本项目在其之上做了修复、补全与 AI 能力扩展。
+[Apache License 2.0](LICENSE)
